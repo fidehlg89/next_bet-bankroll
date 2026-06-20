@@ -38,17 +38,13 @@ function calcPnL(stake: number, odds: number, result: "W" | "L" | "P"): number {
 }
 
 export const syncGoogleSheet = async (userId: string, supabase: SupabaseClient) => {
-  const apiKey = process.env.LOVABLE_API_KEY;
-  const connKey = process.env.GOOGLE_SHEETS_API_KEY;
-  if (!apiKey || !connKey) throw new Error("Google Sheets connector not configured");
+  const apiKey = process.env.GOOGLE_SHEETS_API_KEY;
+  if (!apiKey) throw new Error("Google Sheets API Key no configurada en .env.local");
 
-  const url = `${GATEWAY}/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_RANGE}?valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING`;
-  const res = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "X-Connection-Api-Key": connKey,
-    },
-  });
+  const GATEWAY = "https://sheets.googleapis.com/v4";
+  const url = `${GATEWAY}/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_RANGE}?key=${apiKey}&valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING`;
+  
+  const res = await fetch(url);
   if (!res.ok) {
     const body = await res.text();
     throw new Error(`Sheet fetch failed ${res.status}: ${body.slice(0, 200)}`);
