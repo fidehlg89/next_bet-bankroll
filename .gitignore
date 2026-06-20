@@ -34,6 +34,7 @@ dist-ssr
 # Agents / AI tools
 .agents/
 .lovable/
+.cursorrules
 
 # Editor directories and files
 .vscode/*
