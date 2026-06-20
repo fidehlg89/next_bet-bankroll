@@ -68,3 +68,26 @@ export const useDailyPnLByTipster = () =>
       return { points, tipsters };
     },
   });
+
+export const useResultDistribution = () =>
+  useQuery({
+    queryKey: ["performance", "distribution"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("bets")
+        .select("result")
+        .not("result", "is", null);
+      if (error) throw error;
+      const count = { W: 0, L: 0, P: 0 };
+      data.forEach((b) => {
+        if (b.result === "W") count.W++;
+        if (b.result === "L") count.L++;
+        if (b.result === "P") count.P++;
+      });
+      return [
+        { name: "W", value: count.W, fill: "#8b5cf6" }, // Violet (W)
+        { name: "L", value: count.L, fill: "#ef4444" }, // Red (L)
+        { name: "P", value: count.P, fill: "#84cc16" }, // Green/Lime (P)
+      ];
+    },
+  });

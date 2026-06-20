@@ -3,9 +3,11 @@
 import {
   useTipsterMonthly,
   useDailyPnLByTipster,
+  useResultDistribution,
 } from "@/features/performance/hooks/usePerformance";
 import { TipsterMonthlyTable } from "@/features/performance/components/TipsterMonthly";
 import { DailyPnLChart } from "@/features/performance/components/DailyPnLChart";
+import { ResultDistributionChart } from "@/features/performance/components/ResultDistributionChart";
 import { useTipsterStats } from "@/features/dashboard/hooks/useDashboardStats";
 import { TipsterLeaderboard } from "@/features/dashboard/components/TipsterLeaderboard";
 
@@ -13,6 +15,7 @@ export default function RendimientoPage() {
   const { data: rows = [] } = useTipsterMonthly();
   const { data: chart } = useDailyPnLByTipster();
   const { data: tipsters = [] } = useTipsterStats();
+  const { data: distribution = [] } = useResultDistribution();
 
   return (
     <div className="space-y-6">
@@ -24,10 +27,15 @@ export default function RendimientoPage() {
           Desempeño detallado por tipster.
         </p>
       </div>
-      <DailyPnLChart
-        points={chart?.points ?? []}
-        tipsters={chart?.tipsters ?? []}
-      />
+
+      <div className="grid gap-4 md:grid-cols-[2fr_1fr]">
+        <DailyPnLChart
+          points={chart?.points ?? []}
+          tipsters={chart?.tipsters ?? []}
+        />
+        <ResultDistributionChart data={distribution} />
+      </div>
+
       <div className="grid gap-4 md:grid-cols-2">
         <TipsterMonthlyTable rows={rows} />
         <TipsterLeaderboard data={tipsters} />
