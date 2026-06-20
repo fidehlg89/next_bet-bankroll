@@ -85,9 +85,9 @@ export const useResultDistribution = () =>
         if (b.result === "P") count.P++;
       });
       return [
-        { name: "W", value: count.W, fill: "#8b5cf6" }, // Violet (W)
-        { name: "L", value: count.L, fill: "#ef4444" }, // Red (L)
-        { name: "P", value: count.P, fill: "#84cc16" }, // Green/Lime (P)
+        { name: "W", value: count.W, fill: "#22c55e" }, // Green (Win)
+        { name: "L", value: count.L, fill: "#ef4444" }, // Red (Loss)
+        { name: "P", value: count.P, fill: "#3b82f6" }, // Blue (Push)
       ];
     },
   });
