@@ -1,0 +1,1 @@
+DELETE FROM public.bets WHERE user_id = '12bc2a8c-f9fd-4409-a75e-3e679041fc81';
