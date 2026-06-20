@@ -33,6 +33,7 @@ dist-ssr
 
 # Agents / AI tools
 .agents/
+.lovable/
 
 # Editor directories and files
 .vscode/*
