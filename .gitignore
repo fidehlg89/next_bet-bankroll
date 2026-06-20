@@ -31,6 +31,9 @@ dist-ssr
 # Wrangler / Cloudflare
 .wrangler/
 
+# Agents / AI tools
+.agents/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -1,0 +1,40 @@
+# BankrollOS - Project Knowledge & Engineering Guidelines
+
+You are an expert AI software engineer assisting with the **BankrollOS** project. Read and strictly adhere to these guidelines for all code generation, refactoring, and architectural decisions.
+
+## 1. Project Summary (Context)
+- **Project Name:** BankrollOS
+- **Description:** A comprehensive sports betting bankroll management application. It allows users to import, track, and analyze their betting history, PnL, and tipster performance.
+- **Tech Stack:** Next.js 15 (App Router), React, TypeScript, Tailwind CSS, shadcn/ui.
+- **Backend & DB:** Supabase (PostgreSQL, Authentication, Row Level Security).
+- **History:** Recently migrated from a client-side Lovable project (using TanStack Query/Router) to a fullstack Next.js architecture.
+
+## 2. Clean Architecture & Code Structure
+Follow a strictly separated feature-based architecture to maintain scalability:
+- **`app/` (Routing Layer):** Contains Next.js Route Handlers (`api/`), Pages, and Layouts. Keep business logic out of this layer. Pages should be Server Components by default.
+- **`src/features/` (Domain Layer):** The core of the application. Each feature (e.g., `bets`, `tipsters`, `dashboard`) must be self-contained, including its own:
+  - `components/` (UI specific to the feature)
+  - `hooks/` (State and data fetching)
+  - `services/` (Business logic, DB calls)
+- **`src/shared/` (Shared Layer):** Cross-feature components (e.g., UI library from shadcn in `src/shared/components/ui`), hooks, and utilities.
+- **`src/lib/` (Infrastructure):** Supabase client instances, external integrations, and heavy utility functions.
+
+## 3. Software Engineering Best Practices (Senior Level)
+- **Strict TypeScript:** Do NOT use `any`. Define interfaces/types for all data structures. Use Supabase generated types for database queries.
+- **Server vs Client Components:** 
+  - Maximize the use of **React Server Components (RSC)** for data fetching and SEO to reduce JavaScript bundle size.
+  - Use `"use client"` **only** at the leaves of the component tree (e.g., interactive forms, buttons, hooks like `useState` or `useEffect`).
+- **Data Mutations:** Prefer **Server Actions** or structured **API Route Handlers** (`app/api/...`) over direct client-side Supabase insertions to maintain a clear security boundary.
+- **Error Handling:** Centralize error handling. Do not expose internal server errors or DB constraint errors directly to the UI. Return user-friendly error messages from APIs.
+- **DRY & SOLID Principles:** Extract repetitive UI into shared components. Ensure components have a single responsibility.
+- **Performance:** Avoid excessive re-renders. Use `useMemo` and `useCallback` where computationally heavy or when passing props to memoized children.
+
+## 4. Version Control & Lovable Constraints
+- **Conventional Commits:** Use standard prefixes: `feat:`, `fix:`, `refactor:`, `chore:`, `docs:`.
+- **Branching:** Use descriptive branch names for context-switching (e.g., `feature/google-oauth`, `fix/import-parser`).
+- **CRITICAL LOVABLE RULE:** This repository is connected to Lovable. **NEVER** rewrite published git history. Do NOT use `git push --force`, `rebase`, `amend`, or `squash` on commits that have already been pushed to the remote. Doing so will break the sync with the Lovable editor.
+- **Code Review:** Always review changes against existing context and create separate branches for different functional contexts.
+
+## 5. Security & Authentication
+- All data access must pass through Supabase **Row Level Security (RLS)**.
+- Backend APIs must always verify the user session using `createSupabaseServerClient()` and `supabase.auth.getUser()`. Never trust the client.

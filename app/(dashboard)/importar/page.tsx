@@ -1,32 +1,40 @@
-import { createFileRoute } from "@tanstack/react-router";
+"use client";
+
 import { useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Download, FileCode2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { importFromGoogleSheet } from "@/lib/sheet-import.functions";
-import { importFromHtml22Bet } from "@/lib/html-22bet-import.functions";
+import { supabase } from "@/integrations/supabase/client";
 
-export const Route = createFileRoute("/_authenticated/importar")({
-  head: () => ({ meta: [{ title: "Importar — BankrollOS" }] }),
-  component: ImportPage,
-});
-
-function ImportPage() {
+export default function ImportarPage() {
   const qc = useQueryClient();
-  const runSheetImport = useServerFn(importFromGoogleSheet);
-  const runHtmlImport = useServerFn(importFromHtml22Bet);
   const [loading, setLoading] = useState(false);
   const [htmlLoading, setHtmlLoading] = useState(false);
   const [html, setHtml] = useState("");
 
+  const getAuthHeader = async () => {
+    const { data } = await supabase.auth.getSession();
+    const token = data.session?.access_token;
+    if (!token) throw new Error("No autenticado");
+    return { Authorization: `Bearer ${token}` };
+  };
+
   const onImport = async () => {
     setLoading(true);
     try {
-      const r = await runSheetImport();
+      const headers = await getAuthHeader();
+      const res = await fetch("/api/import/sheet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...headers },
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error ?? `Error ${res.status}`);
+      }
+      const r = await res.json();
       toast.success(
         `Importadas ${r.inserted} · saltadas ${r.skipped} (duplicadas) · total ${r.total}`,
       );
@@ -52,7 +60,17 @@ function ImportPage() {
     }
     setHtmlLoading(true);
     try {
-      const r = await runHtmlImport({ data: { html } });
+      const headers = await getAuthHeader();
+      const res = await fetch("/api/import/22bet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...headers },
+        body: JSON.stringify({ html }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error ?? `Error ${res.status}`);
+      }
+      const r = await res.json();
       toast.success(
         `22Bet: ${r.inserted} nuevas · ${r.updated} actualizadas · ${r.skipped} sin cambios (parsed ${r.parsed})`,
       );
@@ -68,9 +86,12 @@ function ImportPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-semibold tracking-tight">Importar</h1>
+        <h1 className="font-display text-2xl font-semibold tracking-tight">
+          Importar
+        </h1>
         <p className="text-sm text-muted-foreground">
-          Sincroniza tu histórico desde Google Sheets o pega el HTML del historial de 22Bet.
+          Sincroniza tu histórico desde Google Sheets o pega el HTML del
+          historial de 22Bet.
         </p>
       </div>
 
@@ -78,15 +99,25 @@ function ImportPage() {
         <Card className="p-5">
           <div className="mb-3 flex items-center gap-2">
             <Download className="h-4 w-4 text-primary" />
-            <h2 className="font-display font-semibold">Semilla desde Google Sheet</h2>
+            <h2 className="font-display font-semibold">
+              Semilla desde Google Sheet
+            </h2>
           </div>
           <p className="text-sm text-muted-foreground">
-            Lee la pestaña <code className="text-foreground">REGISTRO</code> de tu Sheet de banca y
-            crea las apuestas que aún no existen en BankrollOS. Idempotente — puedes
-            volver a pulsarlo sin duplicar.
+            Lee la pestaña <code className="text-foreground">REGISTRO</code> de
+            tu Sheet de banca y crea las apuestas que aún no existen en
+            BankrollOS. Idempotente — puedes volver a pulsarlo sin duplicar.
           </p>
-          <Button onClick={onImport} disabled={loading} className="mt-4 w-full gap-2">
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+          <Button
+            onClick={onImport}
+            disabled={loading}
+            className="mt-4 w-full gap-2"
+          >
+            {loading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4" />
+            )}
             {loading ? "Importando…" : "Sincronizar Sheet"}
           </Button>
         </Card>
@@ -94,12 +125,16 @@ function ImportPage() {
         <Card className="p-5">
           <div className="mb-3 flex items-center gap-2">
             <FileCode2 className="h-4 w-4 text-accent" />
-            <h2 className="font-display font-semibold">Importar HTML de 22Bet</h2>
+            <h2 className="font-display font-semibold">
+              Importar HTML de 22Bet
+            </h2>
           </div>
           <p className="text-sm text-muted-foreground">
-            Pega el HTML completo del historial de 22Bet (Ctrl+U → copiar todo). Cada ticket se
-            identifica por su nº; reimportar el mismo HTML no duplica nada, y si una apuesta
-            estaba pendiente y ya tiene resultado, se actualiza. Tipster = <em>Sin asignar</em>.
+            Pega el HTML completo del historial de 22Bet (Ctrl+U → copiar todo).
+            Cada ticket se identifica por su nº; reimportar el mismo HTML no
+            duplica nada, y si una apuesta estaba pendiente y ya tiene
+            resultado, se actualiza. Tipster ={" "}
+            <em>Sin asignar</em>.
           </p>
           <Textarea
             value={html}

@@ -1,57 +1,79 @@
-import { Link, useRouter } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
-import { useQueryClient } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { LogOut, TrendingUp } from "lucide-react";
-import { cn } from "@/lib/utils";
+"use client";
 
-const links: { to: "/" | "/registro" | "/analisis" | "/rendimiento" | "/importar"; label: string; exact?: boolean }[] = [
-  { to: "/", label: "Dashboard", exact: true },
-  { to: "/registro", label: "REGISTRO" },
-  { to: "/analisis", label: "Análisis" },
-  { to: "/rendimiento", label: "Rendimiento" },
-  { to: "/importar", label: "Importar" },
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { TrendingUp, LayoutDashboard, ListTodo, LineChart, FileDown, LogOut } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+
+const navItems = [
+  { href: "/", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/registro", label: "Registro", icon: ListTodo },
+  { href: "/analisis", label: "Análisis", icon: LineChart },
+  { href: "/rendimiento", label: "Rendimiento", icon: TrendingUp },
+  { href: "/importar", label: "Importar", icon: FileDown },
 ];
 
 export function Navbar() {
-  const router = useRouter();
-  const qc = useQueryClient();
-  const signOut = async () => {
-    await qc.cancelQueries();
-    qc.clear();
-    await supabase.auth.signOut();
-    router.navigate({ to: "/auth", replace: true });
-  };
+  const pathname = usePathname();
+  const { signOut } = useAuth();
+
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-7xl items-center gap-6 px-4">
-        <Link to="/" className="flex items-center gap-2 font-display text-lg font-bold tracking-tight">
-          <span className="grid h-7 w-7 place-items-center rounded-md bg-primary text-primary-foreground">
-            <TrendingUp className="h-4 w-4" />
-          </span>
-          Bankroll<span className="text-primary">OS</span>
-        </Link>
-        <nav className="flex items-center gap-1 text-sm">
-          {links.map((l) => (
-            <Link
-              key={l.to}
-              to={l.to}
-              activeOptions={{ exact: !!l.exact }}
-              className={cn(
-                "rounded-md px-3 py-1.5 text-muted-foreground transition-colors hover:text-foreground",
-              )}
-              activeProps={{ className: "bg-secondary text-foreground" }}
-            >
-              {l.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="ml-auto">
-          <Button variant="ghost" size="sm" onClick={signOut} className="gap-2 text-muted-foreground">
-            <LogOut className="h-4 w-4" /> Salir
-          </Button>
+    <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-xl">
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
+        <div className="flex items-center gap-6">
+          <Link href="/" className="flex items-center gap-2 font-display font-semibold transition-opacity hover:opacity-80">
+            <span className="grid h-7 w-7 place-items-center rounded bg-primary text-primary-foreground">
+              <TrendingUp className="h-4 w-4" />
+            </span>
+            <span className="hidden sm:inline-block">Bankroll<span className="text-primary">OS</span></span>
+          </Link>
+          <div className="hidden gap-1 md:flex">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  pathname === item.href
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                )}
+              >
+                <item.icon className="h-4 w-4" />
+                {item.label}
+              </Link>
+            ))}
+          </div>
         </div>
+
+        <button
+          onClick={() => signOut()}
+          className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+        >
+          <LogOut className="h-4 w-4" />
+          <span className="hidden sm:inline-block">Salir</span>
+        </button>
       </div>
-    </header>
+
+      {/* Mobile nav (bottom) */}
+      <div className="fixed bottom-0 left-0 z-50 flex h-16 w-full items-center justify-around border-t border-border bg-background/80 px-2 pb-safe backdrop-blur-xl md:hidden">
+        {navItems.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={cn(
+              "flex flex-col items-center gap-1 rounded-lg p-2 text-[10px] font-medium transition-colors",
+              pathname === item.href
+                ? "text-primary"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <item.icon className={cn("h-5 w-5", pathname === item.href && "fill-primary/20")} />
+            {item.label}
+          </Link>
+        ))}
+      </div>
+    </nav>
   );
 }

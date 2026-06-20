@@ -1,18 +1,19 @@
-import { createFileRoute } from "@tanstack/react-router";
+"use client";
+
+import type { Metadata } from "next";
 import { useBets } from "@/features/bets/hooks/useBets";
 import { useBetStats, INITIAL_BANKROLL } from "@/features/bets/hooks/useBetStats";
 import { KpiCards } from "@/features/dashboard/components/KpiCards";
 import { BankrollChart } from "@/features/dashboard/components/BankrollChart";
 import { MarketTable } from "@/features/dashboard/components/MarketTable";
 import { TipsterLeaderboard } from "@/features/dashboard/components/TipsterLeaderboard";
-import { useBankrollDaily, useMarketStats, useTipsterStats } from "@/features/dashboard/hooks/useDashboardStats";
+import {
+  useBankrollDaily,
+  useMarketStats,
+  useTipsterStats,
+} from "@/features/dashboard/hooks/useDashboardStats";
 
-export const Route = createFileRoute("/_authenticated/")({
-  head: () => ({ meta: [{ title: "Dashboard — BankrollOS" }] }),
-  component: Dashboard,
-});
-
-function Dashboard() {
+export default function DashboardPage() {
   const { data: bets = [] } = useBets();
   const stats = useBetStats(bets);
   const { data: market = [] } = useMarketStats();
@@ -22,8 +23,12 @@ function Dashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-semibold tracking-tight">Dashboard</h1>
-        <p className="text-sm text-muted-foreground">Visión general de tu banca.</p>
+        <h1 className="font-display text-2xl font-semibold tracking-tight">
+          Dashboard
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Visión general de tu banca.
+        </p>
       </div>
       <KpiCards stats={stats} />
       <BankrollChart data={bankroll} />
