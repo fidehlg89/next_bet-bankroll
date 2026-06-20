@@ -1,10 +1,7 @@
 "use client";
 
 import { useBets } from "@/features/bets/hooks/useBets";
-import {
-  useBestWorst,
-  useMonthlyAnalysis,
-} from "@/features/analysis/hooks/useMonthlyAnalysis";
+import { useBestWorst, useMonthlyAnalysis } from "@/features/analysis/hooks/useMonthlyAnalysis";
 import { useBetStats } from "@/features/bets/hooks/useBetStats";
 import { MonthlyStats } from "@/features/analysis/components/MonthlyStats";
 import { BestWorstPicks } from "@/features/analysis/components/BestWorstPicks";
@@ -21,12 +18,8 @@ export default function AnalisisPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-semibold tracking-tight">
-          Análisis
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Desempeño por mes y picks destacados.
-        </p>
+        <h1 className="font-display text-2xl font-semibold tracking-tight">Análisis</h1>
+        <p className="text-sm text-muted-foreground">Desempeño por mes y picks destacados.</p>
       </div>
 
       <div className="grid gap-3 md:grid-cols-4">

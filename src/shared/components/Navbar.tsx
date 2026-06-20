@@ -22,11 +22,16 @@ export function Navbar() {
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
         <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2 font-display font-semibold transition-opacity hover:opacity-80">
+          <Link
+            href="/"
+            className="flex items-center gap-2 font-display font-semibold transition-opacity hover:opacity-80"
+          >
             <span className="grid h-7 w-7 place-items-center rounded bg-primary text-primary-foreground">
               <TrendingUp className="h-4 w-4" />
             </span>
-            <span className="hidden sm:inline-block">Bankroll<span className="text-primary">OS</span></span>
+            <span className="hidden sm:inline-block">
+              Bankroll<span className="text-primary">OS</span>
+            </span>
           </Link>
           <div className="hidden gap-1 md:flex">
             {navItems.map((item) => (
@@ -37,7 +42,7 @@ export function Navbar() {
                   "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                   pathname === item.href
                     ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                    : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
                 )}
               >
                 <item.icon className="h-4 w-4" />
@@ -66,7 +71,7 @@ export function Navbar() {
               "flex flex-col items-center gap-1 rounded-lg p-2 text-[10px] font-medium transition-colors",
               pathname === item.href
                 ? "text-primary"
-                : "text-muted-foreground hover:text-foreground"
+                : "text-muted-foreground hover:text-foreground",
             )}
           >
             <item.icon className={cn("h-5 w-5", pathname === item.href && "fill-primary/20")} />

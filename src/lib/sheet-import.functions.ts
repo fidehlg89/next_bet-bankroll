@@ -43,7 +43,7 @@ export const syncGoogleSheet = async (userId: string, supabase: SupabaseClient) 
 
   const GATEWAY = "https://sheets.googleapis.com/v4";
   const url = `${GATEWAY}/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_RANGE}?key=${apiKey}&valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING`;
-  
+
   const res = await fetch(url);
   if (!res.ok) {
     const body = await res.text();
@@ -71,12 +71,12 @@ export const syncGoogleSheet = async (userId: string, supabase: SupabaseClient) 
     const bet_date = parseDate(r[1]);
     const odds = toNum(r[7]);
     const stake = toNum(r[8]);
-    const tipster = (r[6] != null ? String(r[6]).trim() : "");
-    const market = (r[3] != null ? String(r[3]).trim() : "");
-    const bet_type = (r[5] != null ? String(r[5]).trim() : "Simple");
+    const tipster = r[6] != null ? String(r[6]).trim() : "";
+    const market = r[3] != null ? String(r[3]).trim() : "";
+    const bet_type = r[5] != null ? String(r[5]).trim() : "Simple";
     if (!bet_date || odds == null || stake == null || !tipster || !market) continue;
 
-    const rawResult = (r[9] != null ? String(r[9]).trim().toUpperCase() : "");
+    const rawResult = r[9] != null ? String(r[9]).trim().toUpperCase() : "";
     const result: "W" | "L" | "P" | null =
       rawResult === "W" || rawResult === "L" || rawResult === "P" ? rawResult : null;
     let pnl: number | null = null;
@@ -105,9 +105,14 @@ export const syncGoogleSheet = async (userId: string, supabase: SupabaseClient) 
     .select("bet_date,market,tipster,odds,stake,bet_type,pick,event");
   if (selErr) throw selErr;
   const keyOf = (b: {
-    bet_date: string; market: string | null; tipster: string;
-    odds: number; stake: number; bet_type: string;
-    pick: string | null; event: string | null;
+    bet_date: string;
+    market: string | null;
+    tipster: string;
+    odds: number;
+    stake: number;
+    bet_type: string;
+    pick: string | null;
+    event: string | null;
   }) =>
     `${b.bet_date}|${b.market ?? ""}|${b.tipster}|${b.odds}|${b.stake}|${b.bet_type}|${b.pick ?? ""}|${b.event ?? ""}`;
   const seen = new Set((existing ?? []).map(keyOf));
@@ -130,9 +135,7 @@ export const syncGoogleSheet = async (userId: string, supabase: SupabaseClient) 
   // Also seed tipsters
   const tipsterNames = Array.from(new Set(toInsert.map((b) => b.tipster)));
   if (tipsterNames.length) {
-    const { data: existTips } = await supabase
-      .from("tipsters")
-      .select("name");
+    const { data: existTips } = await supabase.from("tipsters").select("name");
     const existSet = new Set((existTips ?? []).map((t) => t.name));
     const newTips = tipsterNames
       .filter((n) => !existSet.has(n))

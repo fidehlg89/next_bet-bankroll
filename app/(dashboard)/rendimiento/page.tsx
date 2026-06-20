@@ -20,19 +20,12 @@ export default function RendimientoPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-semibold tracking-tight">
-          Rendimiento
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Desempeño detallado por tipster.
-        </p>
+        <h1 className="font-display text-2xl font-semibold tracking-tight">Rendimiento</h1>
+        <p className="text-sm text-muted-foreground">Desempeño detallado por tipster.</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-[2fr_1fr]">
-        <DailyPnLChart
-          points={chart?.points ?? []}
-          tipsters={chart?.tipsters ?? []}
-        />
+        <DailyPnLChart points={chart?.points ?? []} tipsters={chart?.tipsters ?? []} />
         <ResultDistributionChart data={distribution} />
       </div>
 

@@ -1,5 +1,18 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { BetForm } from "./BetForm";
@@ -62,7 +75,9 @@ export function BetTable({ bets }: { bets: Bet[] }) {
                 <TableCell className="text-muted-foreground font-mono-num">{i + 1}</TableCell>
                 <TableCell className="font-mono-num text-xs">{fDate(b.bet_date)}</TableCell>
                 <TableCell className="max-w-[200px] truncate">{b.event ?? "—"}</TableCell>
-                <TableCell><span className="text-xs text-muted-foreground">{b.market}</span></TableCell>
+                <TableCell>
+                  <span className="text-xs text-muted-foreground">{b.market}</span>
+                </TableCell>
                 <TableCell className="max-w-[200px] truncate text-sm">{b.pick ?? "—"}</TableCell>
                 <TableCell className="text-xs text-muted-foreground">{b.bet_type}</TableCell>
                 <TableCell className="text-sm">
@@ -77,9 +92,13 @@ export function BetTable({ bets }: { bets: Bet[] }) {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {Array.from(new Set([...(tipsters ?? []), b.tipster])).filter(Boolean).map((t) => (
-                        <SelectItem key={t} value={t}>{t}</SelectItem>
-                      ))}
+                      {Array.from(new Set([...(tipsters ?? []), b.tipster]))
+                        .filter(Boolean)
+                        .map((t) => (
+                          <SelectItem key={t} value={t}>
+                            {t}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 </TableCell>
@@ -91,7 +110,12 @@ export function BetTable({ bets }: { bets: Bet[] }) {
                     onValueChange={(v) => {
                       if (!v) return;
                       setFlashId(b.id);
-                      settle.mutate({ id: b.id, result: v as BetResult, odds: b.odds, stake: b.stake });
+                      settle.mutate({
+                        id: b.id,
+                        result: v as BetResult,
+                        odds: b.odds,
+                        stake: b.stake,
+                      });
                       setTimeout(() => setFlashId(null), 600);
                     }}
                   >
@@ -112,10 +136,22 @@ export function BetTable({ bets }: { bets: Bet[] }) {
                 </TableCell>
                 <TableCell>
                   <div className="flex justify-end gap-1">
-                    <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground" onClick={() => setEditBet(b)}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                      onClick={() => setEditBet(b)}
+                    >
                       <Pencil className="h-3.5 w-3.5" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-neg" onClick={() => { if (confirm("¿Eliminar este pick?")) del.mutate(b.id); }}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 text-muted-foreground hover:text-neg"
+                      onClick={() => {
+                        if (confirm("¿Eliminar este pick?")) del.mutate(b.id);
+                      }}
+                    >
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </div>
@@ -127,7 +163,9 @@ export function BetTable({ bets }: { bets: Bet[] }) {
       </Table>
       <Dialog open={!!editBet} onOpenChange={(o) => !o && setEditBet(null)}>
         <DialogContent className="max-w-2xl">
-          <DialogHeader><DialogTitle className="font-display">Editar pick</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle className="font-display">Editar pick</DialogTitle>
+          </DialogHeader>
           {editBet && <BetForm bet={editBet} onDone={() => setEditBet(null)} />}
         </DialogContent>
       </Dialog>

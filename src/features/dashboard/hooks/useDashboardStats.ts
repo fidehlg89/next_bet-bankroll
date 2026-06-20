@@ -1,6 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { MarketStat, TipsterStat, DailyBankroll, Market } from "@/features/bets/types/bet.types";
+import type {
+  MarketStat,
+  TipsterStat,
+  DailyBankroll,
+  Market,
+} from "@/features/bets/types/bet.types";
 
 export const useMarketStats = () =>
   useQuery({
@@ -26,7 +31,10 @@ export const useTipsterStats = () =>
     queryFn: async () => {
       const { data, error } = await supabase.from("v_tipster_monthly").select("*");
       if (error) throw error;
-      const map = new Map<string, { picks: number; wins: number; losses: number; profit: number; stake: number }>();
+      const map = new Map<
+        string,
+        { picks: number; wins: number; losses: number; profit: number; stake: number }
+      >();
       // aggregate across months
       for (const r of data ?? []) {
         const k = r.tipster as string;
@@ -38,7 +46,10 @@ export const useTipsterStats = () =>
         map.set(k, cur);
       }
       // need yield per tipster from bets
-      const { data: bets } = await supabase.from("bets").select("tipster, stake, bet_type, result").not("result", "is", null);
+      const { data: bets } = await supabase
+        .from("bets")
+        .select("tipster, stake, bet_type, result")
+        .not("result", "is", null);
       const stakeMap = new Map<string, number>();
       for (const b of bets ?? []) {
         if (b.bet_type === "Bono") continue;
@@ -52,7 +63,8 @@ export const useTipsterStats = () =>
           picks: v.picks,
           wins: v.wins,
           losses: v.losses,
-          winRate: v.wins + v.losses ? Number(((v.wins / (v.wins + v.losses)) * 100).toFixed(2)) : 0,
+          winRate:
+            v.wins + v.losses ? Number(((v.wins / (v.wins + v.losses)) * 100).toFixed(2)) : 0,
           profit: Number(v.profit.toFixed(2)),
           yield: stake ? Number(((v.profit / stake) * 100).toFixed(2)) : 0,
         });

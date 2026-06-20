@@ -60,7 +60,17 @@ export const useCreateBet = () => {
 export const useSettleBet = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, result, odds, stake }: { id: string; result: BetResult; odds: number; stake: number }) => {
+    mutationFn: async ({
+      id,
+      result,
+      odds,
+      stake,
+    }: {
+      id: string;
+      result: BetResult;
+      odds: number;
+      stake: number;
+    }) => {
       const pnl = calcPnL(stake, odds, result);
       const { error } = await supabase.from("bets").update({ result, pnl }).eq("id", id);
       if (error) throw error;
@@ -121,19 +131,22 @@ export const useUpdateBet = () => {
     mutationFn: async ({ id, values }: { id: string; values: BetFormValues }) => {
       const result = values.result ? (values.result as BetResult) : null;
       const pnl = result ? calcPnL(values.stake, values.odds, result) : null;
-      const { error } = await supabase.from("bets").update({
-        bet_date: values.bet_date,
-        event: values.event || null,
-        market: values.market,
-        pick: values.pick || null,
-        bet_type: values.bet_type,
-        tipster: values.tipster,
-        odds: values.odds,
-        stake: values.stake,
-        result,
-        pnl,
-        notes: values.notes || null,
-      }).eq("id", id);
+      const { error } = await supabase
+        .from("bets")
+        .update({
+          bet_date: values.bet_date,
+          event: values.event || null,
+          market: values.market,
+          pick: values.pick || null,
+          bet_type: values.bet_type,
+          tipster: values.tipster,
+          odds: values.odds,
+          stake: values.stake,
+          result,
+          pnl,
+          notes: values.notes || null,
+        })
+        .eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {

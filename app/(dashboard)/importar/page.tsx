@@ -86,12 +86,9 @@ export default function ImportarPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-semibold tracking-tight">
-          Importar
-        </h1>
+        <h1 className="font-display text-2xl font-semibold tracking-tight">Importar</h1>
         <p className="text-sm text-muted-foreground">
-          Sincroniza tu histórico desde Google Sheets o pega el HTML del
-          historial de 22Bet.
+          Sincroniza tu histórico desde Google Sheets o pega el HTML del historial de 22Bet.
         </p>
       </div>
 
@@ -99,20 +96,14 @@ export default function ImportarPage() {
         <Card className="p-5">
           <div className="mb-3 flex items-center gap-2">
             <Download className="h-4 w-4 text-primary" />
-            <h2 className="font-display font-semibold">
-              Semilla desde Google Sheet
-            </h2>
+            <h2 className="font-display font-semibold">Semilla desde Google Sheet</h2>
           </div>
           <p className="text-sm text-muted-foreground">
-            Lee la pestaña <code className="text-foreground">REGISTRO</code> de
-            tu Sheet de banca y crea las apuestas que aún no existen en
-            BankrollOS. Idempotente — puedes volver a pulsarlo sin duplicar.
+            Lee la pestaña <code className="text-foreground">REGISTRO</code> de tu Sheet de banca y
+            crea las apuestas que aún no existen en BankrollOS. Idempotente — puedes volver a
+            pulsarlo sin duplicar.
           </p>
-          <Button
-            onClick={onImport}
-            disabled={loading}
-            className="mt-4 w-full gap-2"
-          >
+          <Button onClick={onImport} disabled={loading} className="mt-4 w-full gap-2">
             {loading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
@@ -125,16 +116,12 @@ export default function ImportarPage() {
         <Card className="p-5">
           <div className="mb-3 flex items-center gap-2">
             <FileCode2 className="h-4 w-4 text-accent" />
-            <h2 className="font-display font-semibold">
-              Importar HTML de 22Bet
-            </h2>
+            <h2 className="font-display font-semibold">Importar HTML de 22Bet</h2>
           </div>
           <p className="text-sm text-muted-foreground">
-            Pega el HTML completo del historial de 22Bet (Ctrl+U → copiar todo).
-            Cada ticket se identifica por su nº; reimportar el mismo HTML no
-            duplica nada, y si una apuesta estaba pendiente y ya tiene
-            resultado, se actualiza. Tipster ={" "}
-            <em>Sin asignar</em>.
+            Pega el HTML completo del historial de 22Bet (Ctrl+U → copiar todo). Cada ticket se
+            identifica por su nº; reimportar el mismo HTML no duplica nada, y si una apuesta estaba
+            pendiente y ya tiene resultado, se actualiza. Tipster = <em>Sin asignar</em>.
           </p>
           <Textarea
             value={html}

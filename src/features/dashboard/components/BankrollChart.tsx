@@ -1,7 +1,18 @@
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { fEUR } from "@/shared/lib/formatters";
 
-interface Point { date: string; bankroll: number }
+interface Point {
+  date: string;
+  bankroll: number;
+}
 
 export function BankrollChart({ data }: { data: Point[] }) {
   return (
@@ -12,7 +23,9 @@ export function BankrollChart({ data }: { data: Point[] }) {
       </div>
       <div className="h-[280px]">
         {data.length === 0 ? (
-          <div className="grid h-full place-items-center text-sm text-muted-foreground">Sin datos todavía</div>
+          <div className="grid h-full place-items-center text-sm text-muted-foreground">
+            Sin datos todavía
+          </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data}>
@@ -23,13 +36,36 @@ export function BankrollChart({ data }: { data: Point[] }) {
                 </linearGradient>
               </defs>
               <CartesianGrid stroke="var(--color-border)" strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="date" stroke="var(--color-muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
-              <YAxis stroke="var(--color-muted-foreground)" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(v) => fEUR(v)} />
+              <XAxis
+                dataKey="date"
+                stroke="var(--color-muted-foreground)"
+                fontSize={11}
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis
+                stroke="var(--color-muted-foreground)"
+                fontSize={11}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(v) => fEUR(v)}
+              />
               <Tooltip
-                contentStyle={{ background: "var(--color-popover)", border: "1px solid var(--color-border)", borderRadius: 8, fontSize: 12 }}
+                contentStyle={{
+                  background: "var(--color-popover)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: 8,
+                  fontSize: 12,
+                }}
                 formatter={(v: number) => [fEUR(v), "Bankroll"]}
               />
-              <Area type="monotone" dataKey="bankroll" stroke="var(--accent-green)" strokeWidth={2} fill="url(#bk)" />
+              <Area
+                type="monotone"
+                dataKey="bankroll"
+                stroke="var(--accent-green)"
+                strokeWidth={2}
+                fill="url(#bk)"
+              />
             </AreaChart>
           </ResponsiveContainer>
         )}

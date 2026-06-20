@@ -60,30 +60,30 @@
 :root {
   /* BankrollOS - permanent dark theme */
   --radius: 0.75rem;
-  --background: oklch(0.13 0.015 270);          /* #0A0A0F */
-  --foreground: oklch(0.96 0 0);                /* #F0F0F0 */
-  --card: oklch(0.17 0.018 270);                /* #111118 */
+  --background: oklch(0.13 0.015 270); /* #0A0A0F */
+  --foreground: oklch(0.96 0 0); /* #F0F0F0 */
+  --card: oklch(0.17 0.018 270); /* #111118 */
   --card-foreground: oklch(0.96 0 0);
-  --popover: oklch(0.22 0.02 270);              /* #1C1C28 */
+  --popover: oklch(0.22 0.02 270); /* #1C1C28 */
   --popover-foreground: oklch(0.96 0 0);
-  --primary: oklch(0.78 0.18 160);              /* emerald accent */
+  --primary: oklch(0.78 0.18 160); /* emerald accent */
   --primary-foreground: oklch(0.13 0.015 270);
   --secondary: oklch(0.22 0.02 270);
   --secondary-foreground: oklch(0.96 0 0);
   --muted: oklch(0.22 0.02 270);
-  --muted-foreground: oklch(0.6 0.02 270);      /* #6B7280 */
-  --accent: oklch(0.78 0.16 80);                /* gold accent */
+  --muted-foreground: oklch(0.6 0.02 270); /* #6B7280 */
+  --accent: oklch(0.78 0.16 80); /* gold accent */
   --accent-foreground: oklch(0.13 0.015 270);
-  --destructive: oklch(0.65 0.24 25);           /* #FF4D4F */
+  --destructive: oklch(0.65 0.24 25); /* #FF4D4F */
   --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.28 0.02 270);               /* #2A2A3A */
+  --border: oklch(0.28 0.02 270); /* #2A2A3A */
   --input: oklch(0.22 0.02 270);
   --ring: oklch(0.78 0.18 160);
-  --chart-1: oklch(0.78 0.18 160);              /* emerald */
-  --chart-2: oklch(0.78 0.16 80);               /* gold */
-  --chart-3: oklch(0.65 0.24 25);               /* red */
-  --chart-4: oklch(0.65 0.18 250);              /* blue */
-  --chart-5: oklch(0.7 0.2 320);                /* magenta */
+  --chart-1: oklch(0.78 0.18 160); /* emerald */
+  --chart-2: oklch(0.78 0.16 80); /* gold */
+  --chart-3: oklch(0.65 0.24 25); /* red */
+  --chart-4: oklch(0.65 0.18 250); /* blue */
+  --chart-5: oklch(0.7 0.2 320); /* magenta */
   --sidebar: oklch(0.17 0.018 270);
   --sidebar-foreground: oklch(0.96 0 0);
   --sidebar-primary: oklch(0.78 0.18 160);
@@ -119,19 +119,41 @@
     font-family: var(--font-body);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     font-family: var(--font-display);
     letter-spacing: -0.02em;
   }
-  .font-display { font-family: var(--font-display); }
-  .font-mono-num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
-  .text-pos { color: var(--accent-green); }
-  .text-neg { color: var(--accent-red); }
-  .text-pending { color: var(--accent-gold); }
-  .surface-elevated { background-color: var(--popover); }
-  tr.row-settle-flash { animation: settleFlash 600ms ease-out; }
+  .font-display {
+    font-family: var(--font-display);
+  }
+  .font-mono-num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+  .text-pos {
+    color: var(--accent-green);
+  }
+  .text-neg {
+    color: var(--accent-red);
+  }
+  .text-pending {
+    color: var(--accent-gold);
+  }
+  .surface-elevated {
+    background-color: var(--popover);
+  }
+  tr.row-settle-flash {
+    animation: settleFlash 600ms ease-out;
+  }
   @keyframes settleFlash {
-    0% { background-color: oklch(0.78 0.18 160 / 0.18); }
-    100% { background-color: transparent; }
+    0% {
+      background-color: oklch(0.78 0.18 160 / 0.18);
+    }
+    100% {
+      background-color: transparent;
+    }
   }
 }

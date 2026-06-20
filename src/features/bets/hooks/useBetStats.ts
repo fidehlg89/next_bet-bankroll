@@ -17,7 +17,9 @@ export function useBetStats(bets: Bet[] | undefined, initialBankroll = INITIAL_B
       .filter((b) => b.bet_type !== "Bono")
       .reduce((s, b) => s + Number(b.stake), 0);
     const totalStaked = settled.reduce((s, b) => s + Number(b.stake), 0);
-    const avgOdds = settled.length ? settled.reduce((s, b) => s + Number(b.odds), 0) / settled.length : 0;
+    const avgOdds = settled.length
+      ? settled.reduce((s, b) => s + Number(b.odds), 0) / settled.length
+      : 0;
     const avgStake = settled.length ? totalStaked / settled.length : 0;
     const pnls = settled.map((b) => Number(b.pnl ?? 0));
     const bestWin = pnls.length ? Math.max(...pnls) : 0;

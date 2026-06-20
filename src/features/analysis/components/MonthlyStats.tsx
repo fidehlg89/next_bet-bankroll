@@ -1,4 +1,11 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { fEUR, fMonth, fPct, pnlClass } from "@/shared/lib/formatters";
 import type { MonthlyRow } from "../hooks/useMonthlyAnalysis";
 
@@ -23,7 +30,11 @@ export function MonthlyStats({ rows }: { rows: MonthlyRow[] }) {
         </TableHeader>
         <TableBody>
           {rows.length === 0 && (
-            <TableRow><TableCell colSpan={8} className="text-center text-sm text-muted-foreground py-6">Sin datos</TableCell></TableRow>
+            <TableRow>
+              <TableCell colSpan={8} className="text-center text-sm text-muted-foreground py-6">
+                Sin datos
+              </TableCell>
+            </TableRow>
           )}
           {rows.map((r) => (
             <TableRow key={r.month} className="border-border">
@@ -32,8 +43,12 @@ export function MonthlyStats({ rows }: { rows: MonthlyRow[] }) {
               <TableCell className="text-right font-mono-num text-pos">{r.wins}</TableCell>
               <TableCell className="text-right font-mono-num text-neg">{r.losses}</TableCell>
               <TableCell className="text-right font-mono-num">{r.winRate.toFixed(1)}%</TableCell>
-              <TableCell className={`text-right font-mono-num ${pnlClass(r.profit)}`}>{fEUR(r.profit)}</TableCell>
-              <TableCell className={`text-right font-mono-num ${pnlClass(r.yield)}`}>{fPct(r.yield)}</TableCell>
+              <TableCell className={`text-right font-mono-num ${pnlClass(r.profit)}`}>
+                {fEUR(r.profit)}
+              </TableCell>
+              <TableCell className={`text-right font-mono-num ${pnlClass(r.yield)}`}>
+                {fPct(r.yield)}
+              </TableCell>
               <TableCell className="text-right font-mono-num">{fEUR(r.bankroll)}</TableCell>
             </TableRow>
           ))}

@@ -4,7 +4,9 @@ import { syncGoogleSheet } from "@/lib/sheet-import.functions";
 
 export async function POST(req: Request) {
   const supabase = await createSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
@@ -17,7 +19,7 @@ export async function POST(req: Request) {
     console.error("Sheet import error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Error desconocido" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

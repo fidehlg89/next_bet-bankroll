@@ -13,7 +13,11 @@ export const useBets = (filters?: BetFilters) =>
   useQuery({
     queryKey: ["bets", filters],
     queryFn: async () => {
-      let q = supabase.from("bets").select("*").order("bet_date", { ascending: false }).order("created_at", { ascending: false });
+      let q = supabase
+        .from("bets")
+        .select("*")
+        .order("bet_date", { ascending: false })
+        .order("created_at", { ascending: false });
       if (filters?.tipster && filters.tipster !== "all") q = q.eq("tipster", filters.tipster);
       if (filters?.market && filters.market !== "all") q = q.eq("market", filters.market);
       if (filters?.month) {

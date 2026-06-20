@@ -22,18 +22,34 @@ export default function RegistroPage() {
   const { data: bets = [], isLoading } = useBets(filters);
 
   const exportCsv = () => {
-    const head = ["Fecha","Evento","Mercado","Pick","Tipo","Tipster","Cuota","Stake","Resultado","P&L"];
+    const head = [
+      "Fecha",
+      "Evento",
+      "Mercado",
+      "Pick",
+      "Tipo",
+      "Tipster",
+      "Cuota",
+      "Stake",
+      "Resultado",
+      "P&L",
+    ];
     const lines = [head.join(",")];
     bets.forEach((b) => {
-      lines.push([
-        fDate(b.bet_date),
-        JSON.stringify(b.event ?? ""),
-        b.market,
-        JSON.stringify(b.pick ?? ""),
-        b.bet_type, b.tipster, b.odds, b.stake,
-        b.result ?? "Pending",
-        b.pnl ?? "",
-      ].join(","));
+      lines.push(
+        [
+          fDate(b.bet_date),
+          JSON.stringify(b.event ?? ""),
+          b.market,
+          JSON.stringify(b.pick ?? ""),
+          b.bet_type,
+          b.tipster,
+          b.odds,
+          b.stake,
+          b.result ?? "Pending",
+          b.pnl ?? "",
+        ].join(","),
+      );
     });
     const blob = new Blob([lines.join("\n")], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -48,9 +64,7 @@ export default function RegistroPage() {
     <div className="space-y-5">
       <div className="flex items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl font-semibold tracking-tight">
-            REGISTRO
-          </h1>
+          <h1 className="font-display text-2xl font-semibold tracking-tight">REGISTRO</h1>
           <p className="text-sm text-muted-foreground">
             {bets.length} picks · pendientes con borde ámbar
           </p>

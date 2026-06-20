@@ -1,4 +1,11 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { fEUR, fPct, pnlClass } from "@/shared/lib/formatters";
 import type { TipsterStat } from "@/features/bets/types/bet.types";
 
@@ -19,13 +26,21 @@ export function TipsterLeaderboard({ data }: { data: TipsterStat[] }) {
         </TableHeader>
         <TableBody>
           {data.length === 0 && (
-            <TableRow><TableCell colSpan={4} className="text-center text-sm text-muted-foreground py-6">Sin datos</TableCell></TableRow>
+            <TableRow>
+              <TableCell colSpan={4} className="text-center text-sm text-muted-foreground py-6">
+                Sin datos
+              </TableCell>
+            </TableRow>
           )}
           {data.map((t) => (
             <TableRow key={t.tipster} className="border-border">
               <TableCell className="font-medium">{t.tipster}</TableCell>
-              <TableCell className={`text-right font-mono-num ${pnlClass(t.profit)}`}>{fEUR(t.profit)}</TableCell>
-              <TableCell className={`text-right font-mono-num ${pnlClass(t.yield)}`}>{fPct(t.yield)}</TableCell>
+              <TableCell className={`text-right font-mono-num ${pnlClass(t.profit)}`}>
+                {fEUR(t.profit)}
+              </TableCell>
+              <TableCell className={`text-right font-mono-num ${pnlClass(t.yield)}`}>
+                {fPct(t.yield)}
+              </TableCell>
               <TableCell className="text-right font-mono-num">{t.winRate.toFixed(1)}%</TableCell>
             </TableRow>
           ))}
