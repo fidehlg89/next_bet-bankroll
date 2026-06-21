@@ -46,7 +46,7 @@ export function BankrollAdjustmentModal() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       type: "deposit",
-      amount: 0,
+      amount: "" as unknown as number,
       transaction_date: new Date().toISOString().split("T")[0],
       notes: "",
     },
