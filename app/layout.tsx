@@ -11,6 +11,7 @@ import "@fontsource/jetbrains-mono/500.css";
 import "./globals.css";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { Toaster } from "@/components/ui/sonner";
+import NextTopLoader from "nextjs-toploader";
 
 export const metadata: Metadata = {
   title: {
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es" suppressHydrationWarning>
       <body suppressHydrationWarning>
+        <NextTopLoader color="#10b981" showSpinner={false} />
         <QueryProvider>
           {children}
           <Toaster theme="dark" position="top-right" />
