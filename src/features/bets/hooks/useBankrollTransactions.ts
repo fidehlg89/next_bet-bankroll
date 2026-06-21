@@ -44,3 +44,46 @@ export const useCreateBankrollTransaction = () => {
     },
   });
 };
+
+/**
+ * Reemplaza el bankroll inicial del usuario.
+ * Elimina todas las transacciones de tipo "initial" existentes e inserta una nueva
+ * para que siempre haya exactamente una que represente la banca de arranque.
+ */
+export const useUpsertInitialBankroll = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ amount, notes }: { amount: number; notes?: string }) => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("No autenticado");
+
+      // 1. Borrar todas las transacciones "initial" del usuario
+      const { error: delError } = await supabase
+        .from("bankroll_transactions")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("type", "initial");
+      if (delError) throw delError;
+
+      // 2. Insertar la nueva banca inicial
+      const { error: insError } = await supabase.from("bankroll_transactions").insert({
+        user_id: user.id,
+        type: "initial",
+        amount,
+        transaction_date: new Date().toISOString(),
+        notes: notes ?? null,
+      });
+      if (insError) throw insError;
+    },
+    onSuccess: () => {
+      toast.success("Banca inicial actualizada");
+      qc.invalidateQueries({ queryKey: ["bankroll-transactions"] });
+      qc.invalidateQueries({ queryKey: ["dashboard", "bankroll"] });
+    },
+    onError: (error) => {
+      toast.error(`Error: ${error.message}`);
+    },
+  });
+};

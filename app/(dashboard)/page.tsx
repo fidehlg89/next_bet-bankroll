@@ -6,6 +6,7 @@ import { useBankrollTransactions } from "@/features/bets/hooks/useBankrollTransa
 import { useBetStats } from "@/features/bets/hooks/useBetStats";
 import { KpiCards } from "@/features/dashboard/components/KpiCards";
 import { BankrollAdjustmentModal } from "@/features/dashboard/components/BankrollAdjustmentModal";
+import { InitialBankrollModal } from "@/features/dashboard/components/InitialBankrollModal";
 import { BankrollChart } from "@/features/dashboard/components/BankrollChart";
 import { MarketTable } from "@/features/dashboard/components/MarketTable";
 import { TipsterLeaderboard } from "@/features/dashboard/components/TipsterLeaderboard";
@@ -30,7 +31,10 @@ export default function DashboardPage() {
           <h1 className="font-display text-2xl font-semibold tracking-tight">Dashboard</h1>
           <p className="text-sm text-muted-foreground">Visión general de tu banca.</p>
         </div>
-        <BankrollAdjustmentModal currentBankroll={stats.currentBankroll} />
+        <div className="flex items-center gap-2">
+          <InitialBankrollModal baseBankroll={stats.baseBankroll} />
+          <BankrollAdjustmentModal currentBankroll={stats.currentBankroll} />
+        </div>
       </div>
       <KpiCards stats={stats} />
       <BankrollChart data={bankroll} />
