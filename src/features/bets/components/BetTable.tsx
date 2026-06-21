@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { BetForm } from "./BetForm";
-import { fDate, fEUR, fOdds, pnlClass } from "@/shared/lib/formatters";
+import { fDate, fDateTime, fEUR, fOdds, pnlClass } from "@/shared/lib/formatters";
 import { ResultBadge } from "./ResultBadge";
 import { useDeleteBet, useSettleBet, useUpdateBetTipster } from "../hooks/useBetMutations";
 import { useTipsterList } from "../hooks/useBets";
@@ -87,7 +87,7 @@ export function BetTable({ bets }: { bets: Bet[] }) {
                 )}
               >
                 <TableCell className="text-muted-foreground font-mono-num">{globalIndex}</TableCell>
-                <TableCell className="font-mono-num text-xs">{fDate(b.bet_date)}</TableCell>
+                <TableCell className="font-mono-num text-xs">{fDateTime(b.bet_date)}</TableCell>
                 <TableCell className="max-w-[200px] truncate">{b.event ?? "—"}</TableCell>
                 <TableCell>
                   <span className="text-xs text-muted-foreground">{b.market}</span>
