@@ -85,11 +85,11 @@ export const useBankrollDaily = (initial = 100) =>
         supabase
           .from("bankroll_transactions")
           .select("transaction_date, type, amount")
-          .order("transaction_date", { ascending: true })
+          .order("transaction_date", { ascending: true }),
       ]);
 
       if (betsRes.error) throw betsRes.error;
-      
+
       // We don't throw if transRes fails (e.g. table doesn't exist yet), we just log and proceed
       if (transRes.error) {
         console.warn("Could not fetch bankroll_transactions:", transRes.error);
@@ -115,16 +115,17 @@ export const useBankrollDaily = (initial = 100) =>
       }
 
       // Merge all dates from both bets and transactions
-      const allDates = Array.from(new Set([...map.keys(), ...transByDate.keys()]))
-        .sort((a, b) => a.localeCompare(b));
+      const allDates = Array.from(new Set([...map.keys(), ...transByDate.keys()])).sort((a, b) =>
+        a.localeCompare(b),
+      );
 
       const out: (DailyBankroll & { bankroll: number })[] = [];
       let currentCumulativeTrans = initial; // start with initial (or 0 if initial adjustments are all in DB)
-      
-      // If there are transactions, we should probably ignore the 'initial' param and just use transactions, 
+
+      // If there are transactions, we should probably ignore the 'initial' param and just use transactions,
       // but to be safe we'll use 'initial' only if there are no transactions.
       if (!transRes.error && transRes.data && transRes.data.length > 0) {
-         currentCumulativeTrans = 0; 
+        currentCumulativeTrans = 0;
       }
 
       let lastPnl = 0;
@@ -136,11 +137,11 @@ export const useBankrollDaily = (initial = 100) =>
         if (map.has(date)) {
           lastPnl = map.get(date)!;
         }
-        
-        out.push({ 
-          date, 
-          cumulativePnl: lastPnl, 
-          bankroll: parseFloat((currentCumulativeTrans + lastPnl).toFixed(2)) 
+
+        out.push({
+          date,
+          cumulativePnl: lastPnl,
+          bankroll: parseFloat((currentCumulativeTrans + lastPnl).toFixed(2)),
         });
       }
       return out;

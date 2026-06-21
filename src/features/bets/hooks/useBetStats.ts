@@ -7,7 +7,7 @@ export const INITIAL_BANKROLL = 108.64; // banca semilla declarada en el Sheet
 
 export function useBetStats(
   bets: Bet[] | undefined,
-  transactions?: BankrollTransaction[]
+  transactions?: BankrollTransaction[],
 ): BetStats {
   return useMemo(() => {
     let baseBankroll = INITIAL_BANKROLL;

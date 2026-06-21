@@ -236,7 +236,9 @@ export function BetTable({ bets }: { bets: Bet[] }) {
                     e.preventDefault();
                     setPage((p) => Math.min(totalPages, p + 1));
                   }}
-                  className={page === totalPages || totalPages === 0 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    page === totalPages || totalPages === 0 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
               <PaginationItem>
@@ -246,7 +248,9 @@ export function BetTable({ bets }: { bets: Bet[] }) {
                     e.preventDefault();
                     setPage(totalPages);
                   }}
-                  className={page === totalPages || totalPages === 0 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    page === totalPages || totalPages === 0 ? "pointer-events-none opacity-50" : ""
+                  }
                 >
                   <ChevronsRight className="h-4 w-4" />
                 </PaginationLink>

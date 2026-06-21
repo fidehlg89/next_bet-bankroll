@@ -19,7 +19,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useCreateBankrollTransaction } from "@/features/bets/hooks/useBankrollTransactions";
 import { Wallet } from "lucide-react";
 
@@ -95,7 +101,7 @@ export function BankrollAdjustmentModal() {
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="amount"
