@@ -26,9 +26,9 @@ export function BetFiltersBar({ value, onChange }: Props) {
     (value.result && value.result !== "all")
   );
   return (
-    <div className="flex flex-wrap items-end gap-4">
+    <div className="flex flex-wrap items-end gap-6 py-6">
       <div>
-        <label className="mb-2 block text-[10px] uppercase tracking-wider text-muted-foreground">
+        <label className="mb-3 block text-[10px] uppercase tracking-wider text-muted-foreground">
           Mercado
         </label>
         <Select
@@ -49,7 +49,7 @@ export function BetFiltersBar({ value, onChange }: Props) {
         </Select>
       </div>
       <div>
-        <label className="mb-2 block text-[10px] uppercase tracking-wider text-muted-foreground">
+        <label className="mb-3 block text-[10px] uppercase tracking-wider text-muted-foreground">
           Tipster
         </label>
         <Select
@@ -70,7 +70,7 @@ export function BetFiltersBar({ value, onChange }: Props) {
         </Select>
       </div>
       <div>
-        <label className="mb-2 block text-[10px] uppercase tracking-wider text-muted-foreground">
+        <label className="mb-3 block text-[10px] uppercase tracking-wider text-muted-foreground">
           Mes
         </label>
         <Input
@@ -81,7 +81,7 @@ export function BetFiltersBar({ value, onChange }: Props) {
         />
       </div>
       <div>
-        <label className="mb-2 block text-[10px] uppercase tracking-wider text-muted-foreground">
+        <label className="mb-3 block text-[10px] uppercase tracking-wider text-muted-foreground">
           Resultado
         </label>
         <Select
