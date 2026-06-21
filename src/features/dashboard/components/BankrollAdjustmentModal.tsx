@@ -10,7 +10,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Form,
   FormControl,
@@ -26,21 +25,14 @@ import {
 } from "@/features/bets/hooks/useBankrollTransactions";
 import { Wallet } from "lucide-react";
 
-// ── Schema: ajuste de banca actual (escribe el valor real → calcula delta) ──
-const adjustSchema = z.object({
+const formSchema = z.object({
   newBalance: z.coerce.number().min(0, "El valor no puede ser negativo"),
+  initialBalance: z.coerce.number().min(0, "El valor no puede ser negativo"),
   transaction_date: z.string().min(1, "La fecha es requerida"),
   notes: z.string().optional(),
 });
 
-// ── Schema: editar banca inicial ──
-const initialSchema = z.object({
-  amount: z.coerce.number().min(0, "El valor no puede ser negativo"),
-  notes: z.string().optional(),
-});
-
-type AdjustValues = z.infer<typeof adjustSchema>;
-type InitialValues = z.infer<typeof initialSchema>;
+type FormValues = z.infer<typeof formSchema>;
 
 interface BankrollAdjustmentModalProps {
   currentBankroll?: number;
@@ -52,77 +44,71 @@ export function BankrollAdjustmentModal({
   baseBankroll = 0,
 }: BankrollAdjustmentModalProps) {
   const [open, setOpen] = useState(false);
+  const { mutateAsync: createTransaction, isPending: isAdjusting } = useCreateBankrollTransaction();
+  const { mutateAsync: upsertInitial, isPending: isUpdatingInitial } = useUpsertInitialBankroll();
 
-  const { mutateAsync: createTransaction, isPending: isAdjusting } =
-    useCreateBankrollTransaction();
-  const { mutateAsync: upsertInitial, isPending: isUpdatingInitial } =
-    useUpsertInitialBankroll();
-
-  // ── Formulario: ajuste de banca actual ──
-  const adjustForm = useForm<AdjustValues>({
-    resolver: zodResolver(adjustSchema),
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       newBalance: currentBankroll,
+      initialBalance: baseBankroll,
       transaction_date: new Date().toISOString().split("T")[0],
       notes: "",
     },
   });
 
-  // ── Formulario: banca inicial ──
-  const initialForm = useForm<InitialValues>({
-    resolver: zodResolver(initialSchema),
-    defaultValues: {
-      amount: baseBankroll,
-      notes: "",
-    },
-  });
-
-  // Pre-carga valores al abrir el modal
   useEffect(() => {
     if (open) {
-      adjustForm.reset({
+      form.reset({
         newBalance: currentBankroll,
+        initialBalance: baseBankroll,
         transaction_date: new Date().toISOString().split("T")[0],
         notes: "",
       });
-      initialForm.reset({
-        amount: baseBankroll,
-        notes: "",
-      });
     }
-  }, [open, currentBankroll, baseBankroll, adjustForm, initialForm]);
+  }, [open, currentBankroll, baseBankroll, form]);
 
-  const onAdjustSubmit = async (values: AdjustValues) => {
+  const onSubmit = async (values: FormValues) => {
+    const isPending = isAdjusting || isUpdatingInitial;
+    if (isPending) return;
+
+    const promises: Promise<void>[] = [];
+
+    // Ajuste de banca actual
     const delta = parseFloat((values.newBalance - currentBankroll).toFixed(2));
-    if (delta === 0) {
+    if (delta !== 0) {
+      promises.push(
+        createTransaction({
+          type: delta > 0 ? "deposit" : "withdrawal",
+          amount: Math.abs(delta),
+          transaction_date: new Date(values.transaction_date).toISOString(),
+          notes: values.notes,
+        })
+      );
+    }
+
+    // Ajuste de banca inicial (solo si cambió)
+    const initialDelta = parseFloat((values.initialBalance - baseBankroll).toFixed(2));
+    if (initialDelta !== 0) {
+      promises.push(
+        upsertInitial({ amount: values.initialBalance, notes: values.notes })
+      );
+    }
+
+    if (promises.length === 0) {
       setOpen(false);
       return;
     }
-    const type = delta > 0 ? "deposit" : "withdrawal";
-    const amount = Math.abs(delta);
+
     try {
-      await createTransaction({
-        type,
-        amount,
-        transaction_date: new Date(values.transaction_date).toISOString(),
-        notes: values.notes,
-      });
+      await Promise.all(promises);
       setOpen(false);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const onInitialSubmit = async (values: InitialValues) => {
-    try {
-      await upsertInitial({ amount: values.amount, notes: values.notes });
-      setOpen(false);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const watchedBalance = adjustForm.watch("newBalance");
+  const watchedBalance = form.watch("newBalance");
   const delta =
     typeof watchedBalance === "number"
       ? parseFloat((watchedBalance - currentBankroll).toFixed(2))
@@ -140,133 +126,77 @@ export function BankrollAdjustmentModal({
         <DialogHeader>
           <DialogTitle>Ajuste de Bankroll</DialogTitle>
         </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 
-        <Tabs defaultValue="adjust">
-          <TabsList className="w-full">
-            <TabsTrigger value="adjust" className="flex-1">
-              Banca actual
-            </TabsTrigger>
-            <TabsTrigger value="initial" className="flex-1">
-              Banca inicial
-            </TabsTrigger>
-          </TabsList>
+            <FormField
+              control={form.control}
+              name="initialBalance"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Banca inicial (€)</FormLabel>
+                  <FormControl>
+                    <Input type="number" step="0.01" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* ── Tab 1: Ajustar banca actual ── */}
-          <TabsContent value="adjust">
-            <Form {...adjustForm}>
-              <form
-                onSubmit={adjustForm.handleSubmit(onAdjustSubmit)}
-                className="space-y-4 pt-2"
-              >
-                <FormField
-                  control={adjustForm.control}
-                  name="newBalance"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Banca actual (€)</FormLabel>
-                      <FormControl>
-                        <Input type="number" step="0.01" {...field} />
-                      </FormControl>
-                      {delta !== 0 && (
-                        <p
-                          className={`text-xs font-medium ${
-                            delta > 0 ? "text-green-500" : "text-red-500"
-                          }`}
-                        >
-                          {delta > 0 ? `+${delta.toFixed(2)} €` : `${delta.toFixed(2)} €`}{" "}
-                          respecto al valor actual
-                        </p>
-                      )}
-                      <FormMessage />
-                    </FormItem>
+            <FormField
+              control={form.control}
+              name="newBalance"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Banca actual (€)</FormLabel>
+                  <FormControl>
+                    <Input type="number" step="0.01" {...field} />
+                  </FormControl>
+                  {delta !== 0 && (
+                    <p className={`text-xs font-medium ${delta > 0 ? "text-green-500" : "text-red-500"}`}>
+                      {delta > 0 ? `+${delta.toFixed(2)} €` : `${delta.toFixed(2)} €`} respecto al valor actual
+                    </p>
                   )}
-                />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-                <FormField
-                  control={adjustForm.control}
-                  name="transaction_date"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Fecha</FormLabel>
-                      <FormControl>
-                        <Input type="date" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+            <FormField
+              control={form.control}
+              name="transaction_date"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Fecha</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-                <FormField
-                  control={adjustForm.control}
-                  name="notes"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Notas (Opcional)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Ej. Depósito mensual" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+            <FormField
+              control={form.control}
+              name="notes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Notas (Opcional)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Ej. Depósito mensual" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-                <div className="flex justify-end pt-2">
-                  <Button type="submit" disabled={isAdjusting}>
-                    {isAdjusting ? "Guardando..." : "Guardar Ajuste"}
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </TabsContent>
-
-          {/* ── Tab 2: Editar banca inicial ── */}
-          <TabsContent value="initial">
-            <Form {...initialForm}>
-              <form
-                onSubmit={initialForm.handleSubmit(onInitialSubmit)}
-                className="space-y-4 pt-2"
-              >
-                <p className="text-sm text-muted-foreground">
-                  Establece el capital de arranque. Solo cambia la base; el P&L de tus apuestas no se ve afectado.
-                </p>
-
-                <FormField
-                  control={initialForm.control}
-                  name="amount"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Banca inicial (€)</FormLabel>
-                      <FormControl>
-                        <Input type="number" step="0.01" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={initialForm.control}
-                  name="notes"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Notas (Opcional)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Ej. Banca inicial temporada 2026" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="flex justify-end pt-2">
-                  <Button type="submit" disabled={isUpdatingInitial}>
-                    {isUpdatingInitial ? "Guardando..." : "Guardar"}
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </TabsContent>
-        </Tabs>
+            <div className="flex justify-end pt-2">
+              <Button type="submit" disabled={isAdjusting || isUpdatingInitial}>
+                {isAdjusting || isUpdatingInitial ? "Guardando..." : "Guardar Ajuste"}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
