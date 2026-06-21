@@ -30,6 +30,7 @@ import {
   PaginationItem,
   PaginationNext,
   PaginationPrevious,
+  PaginationLink,
 } from "@/components/ui/pagination";
 
 export function BetTable({ bets }: { bets: Bet[] }) {
