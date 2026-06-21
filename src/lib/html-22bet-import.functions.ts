@@ -57,9 +57,12 @@ function parseEuro(s: string | null | undefined): number | null {
 }
 
 function ddmmyyyyToIso(s: string): string | null {
-  const m = s.match(/(\d{2})\.(\d{2})\.(\d{4})/);
+  const m = s.match(/(\d{2})\.(\d{2})\.(\d{4})(?:\s*\|\s*(\d{2}:\d{2}))?/);
   if (!m) return null;
-  return `${m[3]}-${m[2]}-${m[1]}`;
+  if (m[4]) {
+    return `${m[3]}-${m[2]}-${m[1]}T${m[4]}:00`;
+  }
+  return `${m[3]}-${m[2]}-${m[1]}T00:00:00`;
 }
 
 export function validate22BetHtml(html: string): void {

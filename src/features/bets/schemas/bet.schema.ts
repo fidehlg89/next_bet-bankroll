@@ -11,9 +11,8 @@ export const betSchema = z.object({
   bet_date: z
     .string()
     .min(1, "La fecha es obligatoria")
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Formato de fecha inválido (YYYY-MM-DD)")
-    .refine((v) => !Number.isNaN(new Date(v).getTime()), "Fecha inválida")
-    .refine((v) => new Date(v) <= today(), "La fecha no puede ser futura"),
+    .refine((v) => !Number.isNaN(new Date(v).getTime()), "Fecha/Hora inválida")
+    .refine((v) => new Date(v) <= today(), "La fecha/hora no puede ser futura"),
   event: z.string().trim().max(160, "Máximo 160 caracteres").optional().or(z.literal("")),
   market: z.enum(MARKETS, { message: "Mercado inválido" }),
   pick: z.string().trim().max(160, "Máximo 160 caracteres").optional().or(z.literal("")),
