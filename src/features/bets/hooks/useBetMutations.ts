@@ -149,6 +149,23 @@ export const useUpdateBet = () => {
         .eq("id", id);
       if (error) throw error;
     },
+    onMutate: ({ id, values }) => {
+      const result = values.result ? (values.result as BetResult) : null;
+      const pnl = result ? calcPnL(values.stake, values.odds, result) : null;
+      patchBetInCache(qc, id, {
+        bet_date: values.bet_date,
+        event: values.event || null,
+        market: values.market,
+        pick: values.pick || null,
+        bet_type: values.bet_type,
+        tipster: values.tipster,
+        odds: values.odds,
+        stake: values.stake,
+        result,
+        pnl,
+        notes: values.notes || null,
+      });
+    },
     onSuccess: () => {
       toast.success("Pick actualizado");
       invalidate(qc);
@@ -156,3 +173,4 @@ export const useUpdateBet = () => {
     onError: (e: Error) => toast.error(e.message),
   });
 };
+

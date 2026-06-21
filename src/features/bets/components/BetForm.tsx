@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { betSchema, type BetFormValues } from "../schemas/bet.schema";
@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { DateTimePicker } from "@/components/ui/datetime-picker";
 import { useCreateBet, useUpdateBet } from "../hooks/useBetMutations";
 import { MARKETS, BET_TYPES, RESULTS } from "@/shared/lib/constants";
 import { useTipsterList } from "../hooks/useBets";
@@ -27,14 +28,21 @@ export function BetForm({ onDone, bet }: Props) {
   const { data: tipsters } = useTipsterList();
   const create = useCreateBet();
   const update = useUpdateBet();
-  const today = new Date().toISOString().slice(0, 10);
+  const toDatetimeLocal = (date: string | Date) => {
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return "";
+    const pad = (n: number) => n.toString().padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+
+  const todayTime = toDatetimeLocal(new Date());
   const isEdit = !!bet;
 
   const form = useForm<BetFormValues>({
     resolver: zodResolver(betSchema),
     defaultValues: bet
       ? {
-          bet_date: bet.bet_date,
+          bet_date: toDatetimeLocal(bet.bet_date),
           event: bet.event ?? "",
           market: bet.market,
           pick: bet.pick ?? "",
@@ -46,7 +54,7 @@ export function BetForm({ onDone, bet }: Props) {
           notes: bet.notes ?? "",
         }
       : {
-          bet_date: today,
+          bet_date: todayTime,
           event: "",
           market: "Football",
           pick: "",
@@ -98,8 +106,14 @@ export function BetForm({ onDone, bet }: Props) {
           Revisa los campos marcados ({errorCount} {errorCount === 1 ? "error" : "errores"}).
         </div>
       )}
-      <Field label="Fecha" error={form.formState.errors.bet_date?.message}>
-        <Input type="date" {...form.register("bet_date")} />
+      <Field label="Fecha y Hora" error={form.formState.errors.bet_date?.message}>
+        <Controller
+          name="bet_date"
+          control={form.control}
+          render={({ field }) => (
+            <DateTimePicker value={field.value} onChange={field.onChange} />
+          )}
+        />
       </Field>
       <Field label="Tipster *" error={form.formState.errors.tipster?.message}>
         {addingNew || knownTipsters.length === 0 ? (
