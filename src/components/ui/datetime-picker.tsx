@@ -41,12 +41,9 @@ export function DateTimePicker({ value, onChange }: DateTimePickerProps) {
   const handleSelect = (selectedDate: Date | undefined) => {
     if (selectedDate) {
       const [hours, minutes] = time.split(":");
-      selectedDate.setHours(parseInt(hours, 10), parseInt(minutes, 10));
+      selectedDate.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
       setDate(selectedDate);
-      
-      const pad = (n: number) => n.toString().padStart(2, "0");
-      const iso = `${selectedDate.getFullYear()}-${pad(selectedDate.getMonth() + 1)}-${pad(selectedDate.getDate())}T${pad(selectedDate.getHours())}:${pad(selectedDate.getMinutes())}`;
-      onChange?.(iso);
+      onChange?.(selectedDate.toISOString());
     }
   };
 
@@ -56,12 +53,9 @@ export function DateTimePicker({ value, onChange }: DateTimePickerProps) {
     if (date) {
       const [hours, minutes] = newTime.split(":");
       const newDate = new Date(date);
-      newDate.setHours(parseInt(hours, 10), parseInt(minutes, 10));
+      newDate.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
       setDate(newDate);
-
-      const pad = (n: number) => n.toString().padStart(2, "0");
-      const iso = `${newDate.getFullYear()}-${pad(newDate.getMonth() + 1)}-${pad(newDate.getDate())}T${pad(newDate.getHours())}:${pad(newDate.getMinutes())}`;
-      onChange?.(iso);
+      onChange?.(newDate.toISOString());
     }
   };
 
@@ -79,14 +73,22 @@ export function DateTimePicker({ value, onChange }: DateTimePickerProps) {
           {date ? format(date, "dd/MM/yyyy, HH:mm", { locale: es }) : <span>Seleccionar fecha y hora</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={handleSelect}
-          initialFocus
-          locale={es}
-        />
+      <PopoverContent 
+        className="w-[var(--radix-popover-trigger-width)] p-0" 
+        align="start"
+      >
+        <div className="flex justify-center">
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={handleSelect}
+            initialFocus
+            locale={es}
+            captionLayout="dropdown"
+            fromYear={2020}
+            toYear={new Date().getFullYear() + 5}
+          />
+        </div>
         <div className="p-3 border-t border-border flex items-center justify-between gap-2">
           <span className="text-sm font-medium">Hora</span>
           <Input 

@@ -59,10 +59,16 @@ function parseEuro(s: string | null | undefined): number | null {
 function ddmmyyyyToIso(s: string): string | null {
   const m = s.match(/(\d{2})\.(\d{2})\.(\d{4})(?:\s*\|\s*(\d{2}:\d{2}))?/);
   if (!m) return null;
+  
+  const year = parseInt(m[3], 10);
+  const month = parseInt(m[2], 10) - 1;
+  const day = parseInt(m[1], 10);
+
   if (m[4]) {
-    return `${m[3]}-${m[2]}-${m[1]}T${m[4]}:00`;
+    const [hours, minutes] = m[4].split(":").map(Number);
+    return new Date(year, month, day, hours, minutes).toISOString();
   }
-  return `${m[3]}-${m[2]}-${m[1]}T00:00:00`;
+  return new Date(year, month, day, 0, 0).toISOString();
 }
 
 export function validate22BetHtml(html: string): void {
