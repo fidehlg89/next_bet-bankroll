@@ -61,7 +61,7 @@ export default function RegistroPage() {
   };
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="space-y-8">
       <div className="flex items-end justify-between gap-4">
         <div>
           <h1 className="font-display text-2xl font-semibold tracking-tight">REGISTRO</h1>
