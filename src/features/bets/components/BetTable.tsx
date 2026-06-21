@@ -21,7 +21,7 @@ import { ResultBadge } from "./ResultBadge";
 import { useDeleteBet, useSettleBet, useUpdateBetTipster } from "../hooks/useBetMutations";
 import { useTipsterList } from "../hooks/useBets";
 import type { Bet, BetResult } from "../types/bet.types";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -40,10 +40,10 @@ export function BetTable({ bets }: { bets: Bet[] }) {
   const [flashId, setFlashId] = useState<string | null>(null);
   const [editBet, setEditBet] = useState<Bet | null>(null);
   const [page, setPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  const ITEMS_PER_PAGE = 10;
-  const totalPages = Math.ceil(bets.length / ITEMS_PER_PAGE);
-  const paginatedBets = bets.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(bets.length / itemsPerPage);
+  const paginatedBets = bets.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
   if (!bets.length) {
     return (
@@ -75,7 +75,7 @@ export function BetTable({ bets }: { bets: Bet[] }) {
         <TableBody>
           {paginatedBets.map((b, i) => {
             const isPending = b.result === null;
-            const globalIndex = (page - 1) * ITEMS_PER_PAGE + i + 1;
+            const globalIndex = (page - 1) * itemsPerPage + i + 1;
             return (
               <TableRow
                 key={b.id}
@@ -174,10 +174,45 @@ export function BetTable({ bets }: { bets: Bet[] }) {
           })}
         </TableBody>
       </Table>
-      {totalPages > 1 && (
-        <div className="py-4 border-t border-border">
-          <Pagination>
+      {totalPages > 0 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-4 border-t border-border">
+          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+            <span>Mostrar</span>
+            <Select
+              value={itemsPerPage.toString()}
+              onValueChange={(v) => {
+                setItemsPerPage(Number(v));
+                setPage(1);
+              }}
+            >
+              <SelectTrigger className="h-8 w-[70px]">
+                <SelectValue placeholder={itemsPerPage.toString()} />
+              </SelectTrigger>
+              <SelectContent side="top">
+                {[10, 20, 50, 100].map((pageSize) => (
+                  <SelectItem key={pageSize} value={pageSize.toString()}>
+                    {pageSize}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <span>por página</span>
+          </div>
+
+          <Pagination className="mx-0 w-auto">
             <PaginationContent>
+              <PaginationItem>
+                <PaginationLink
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setPage(1);
+                  }}
+                  className={page === 1 ? "pointer-events-none opacity-50" : ""}
+                >
+                  <ChevronsLeft className="h-4 w-4" />
+                </PaginationLink>
+              </PaginationItem>
               <PaginationItem>
                 <PaginationPrevious
                   href="#"
@@ -190,7 +225,7 @@ export function BetTable({ bets }: { bets: Bet[] }) {
               </PaginationItem>
               <PaginationItem>
                 <span className="text-sm text-muted-foreground mx-4">
-                  Página {page} de {totalPages}
+                  Página {page} de {totalPages || 1}
                 </span>
               </PaginationItem>
               <PaginationItem>
@@ -200,8 +235,20 @@ export function BetTable({ bets }: { bets: Bet[] }) {
                     e.preventDefault();
                     setPage((p) => Math.min(totalPages, p + 1));
                   }}
-                  className={page === totalPages ? "pointer-events-none opacity-50" : ""}
+                  className={page === totalPages || totalPages === 0 ? "pointer-events-none opacity-50" : ""}
                 />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setPage(totalPages);
+                  }}
+                  className={page === totalPages || totalPages === 0 ? "pointer-events-none opacity-50" : ""}
+                >
+                  <ChevronsRight className="h-4 w-4" />
+                </PaginationLink>
               </PaginationItem>
             </PaginationContent>
           </Pagination>
