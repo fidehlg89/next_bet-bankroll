@@ -24,6 +24,13 @@ import type { Bet, BetResult } from "../types/bet.types";
 import { Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 export function BetTable({ bets }: { bets: Bet[] }) {
   const settle = useSettleBet();
@@ -32,6 +39,11 @@ export function BetTable({ bets }: { bets: Bet[] }) {
   const { data: tipsters } = useTipsterList();
   const [flashId, setFlashId] = useState<string | null>(null);
   const [editBet, setEditBet] = useState<Bet | null>(null);
+  const [page, setPage] = useState(1);
+
+  const ITEMS_PER_PAGE = 10;
+  const totalPages = Math.ceil(bets.length / ITEMS_PER_PAGE);
+  const paginatedBets = bets.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
   if (!bets.length) {
     return (
@@ -61,8 +73,9 @@ export function BetTable({ bets }: { bets: Bet[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {bets.map((b, i) => {
+          {paginatedBets.map((b, i) => {
             const isPending = b.result === null;
+            const globalIndex = (page - 1) * ITEMS_PER_PAGE + i + 1;
             return (
               <TableRow
                 key={b.id}
@@ -72,7 +85,7 @@ export function BetTable({ bets }: { bets: Bet[] }) {
                   flashId === b.id && "row-settle-flash",
                 )}
               >
-                <TableCell className="text-muted-foreground font-mono-num">{i + 1}</TableCell>
+                <TableCell className="text-muted-foreground font-mono-num">{globalIndex}</TableCell>
                 <TableCell className="font-mono-num text-xs">{fDate(b.bet_date)}</TableCell>
                 <TableCell className="max-w-[200px] truncate">{b.event ?? "—"}</TableCell>
                 <TableCell>
@@ -161,6 +174,39 @@ export function BetTable({ bets }: { bets: Bet[] }) {
           })}
         </TableBody>
       </Table>
+      {totalPages > 1 && (
+        <div className="py-4 border-t border-border">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setPage((p) => Math.max(1, p - 1));
+                  }}
+                  className={page === 1 ? "pointer-events-none opacity-50" : ""}
+                />
+              </PaginationItem>
+              <PaginationItem>
+                <span className="text-sm text-muted-foreground mx-4">
+                  Página {page} de {totalPages}
+                </span>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setPage((p) => Math.min(totalPages, p + 1));
+                  }}
+                  className={page === totalPages ? "pointer-events-none opacity-50" : ""}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
       <Dialog open={!!editBet} onOpenChange={(o) => !o && setEditBet(null)}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
