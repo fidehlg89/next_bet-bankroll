@@ -22,10 +22,10 @@ export async function POST(req: Request) {
     return NextResponse.json(result);
   } catch (error) {
     console.error("22Bet import error:", error);
-    const errorMessage = error instanceof Error ? error.message : String((error as any)?.message || error);
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 },
-    );
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : String((error as { message?: unknown })?.message || error);
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
