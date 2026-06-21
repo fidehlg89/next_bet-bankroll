@@ -61,11 +61,11 @@ export default function RegistroPage() {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-8">
       <div className="flex items-end justify-between gap-4">
         <div>
           <h1 className="font-display text-2xl font-semibold tracking-tight">REGISTRO</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="mt-2 text-sm text-muted-foreground">
             {bets.length} picks · pendientes con borde ámbar
           </p>
         </div>
