@@ -56,14 +56,11 @@ export function BankrollAdjustmentModal({ currentBankroll = 0 }: BankrollAdjustm
     },
   });
 
+  // Cuando el modal se abre, pre-carga el bankroll actual para que el usuario
+  // pueda ver el valor real y modificarlo directamente
   useEffect(() => {
     if (open) {
-      form.reset({
-        type: "deposit",
-        amount: currentBankroll,
-        transaction_date: new Date().toISOString().split("T")[0],
-        notes: "",
-      });
+      form.setValue("amount", currentBankroll);
     }
   }, [open, currentBankroll, form]);
 
