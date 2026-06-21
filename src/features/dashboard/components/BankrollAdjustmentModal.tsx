@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -38,7 +38,11 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function BankrollAdjustmentModal() {
+interface BankrollAdjustmentModalProps {
+  currentBankroll?: number;
+}
+
+export function BankrollAdjustmentModal({ currentBankroll = 0 }: BankrollAdjustmentModalProps) {
   const [open, setOpen] = useState(false);
   const { mutateAsync: createTransaction, isPending } = useCreateBankrollTransaction();
 
@@ -46,11 +50,22 @@ export function BankrollAdjustmentModal() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       type: "deposit",
-      amount: "" as unknown as number,
+      amount: currentBankroll,
       transaction_date: new Date().toISOString().split("T")[0],
       notes: "",
     },
   });
+
+  useEffect(() => {
+    if (open) {
+      form.reset({
+        type: "deposit",
+        amount: currentBankroll,
+        transaction_date: new Date().toISOString().split("T")[0],
+        notes: "",
+      });
+    }
+  }, [open, currentBankroll, form]);
 
   const onSubmit = async (values: FormValues) => {
     try {
