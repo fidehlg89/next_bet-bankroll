@@ -12,9 +12,12 @@ export const fDate = (d: string) =>
   );
 
 export const fDateTime = (d: string) =>
-  new Intl.DateTimeFormat("pt-PT", { 
-    day: "2-digit", month: "2-digit", year: "numeric", 
-    hour: "2-digit", minute: "2-digit" 
+  new Intl.DateTimeFormat("pt-PT", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   }).format(new Date(d));
 
 export const fMonth = (d: string) =>

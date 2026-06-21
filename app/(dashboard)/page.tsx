@@ -2,8 +2,10 @@
 
 import type { Metadata } from "next";
 import { useBets } from "@/features/bets/hooks/useBets";
-import { useBetStats, INITIAL_BANKROLL } from "@/features/bets/hooks/useBetStats";
+import { useBankrollTransactions } from "@/features/bets/hooks/useBankrollTransactions";
+import { useBetStats } from "@/features/bets/hooks/useBetStats";
 import { KpiCards } from "@/features/dashboard/components/KpiCards";
+import { BankrollAdjustmentModal } from "@/features/dashboard/components/BankrollAdjustmentModal";
 import { BankrollChart } from "@/features/dashboard/components/BankrollChart";
 import { MarketTable } from "@/features/dashboard/components/MarketTable";
 import { TipsterLeaderboard } from "@/features/dashboard/components/TipsterLeaderboard";
@@ -15,16 +17,20 @@ import {
 
 export default function DashboardPage() {
   const { data: bets = [] } = useBets();
-  const stats = useBetStats(bets);
+  const { data: transactions = [] } = useBankrollTransactions();
+  const stats = useBetStats(bets, transactions);
   const { data: market = [] } = useMarketStats();
   const { data: tipsters = [] } = useTipsterStats();
-  const { data: bankroll = [] } = useBankrollDaily(INITIAL_BANKROLL);
+  const { data: bankroll = [] } = useBankrollDaily();
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-2xl font-semibold tracking-tight">Dashboard</h1>
-        <p className="text-sm text-muted-foreground">Visión general de tu banca.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="font-display text-2xl font-semibold tracking-tight">Dashboard</h1>
+          <p className="text-sm text-muted-foreground">Visión general de tu banca.</p>
+        </div>
+        <BankrollAdjustmentModal />
       </div>
       <KpiCards stats={stats} />
       <BankrollChart data={bankroll} />

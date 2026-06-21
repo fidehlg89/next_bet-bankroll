@@ -173,4 +173,3 @@ export const useUpdateBet = () => {
     onError: (e: Error) => toast.error(e.message),
   });
 };
-

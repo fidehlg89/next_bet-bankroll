@@ -1,7 +1,6 @@
 import { StatCard } from "@/shared/components/StatCard";
 import { fEUR, fPct } from "@/shared/lib/formatters";
 import type { BetStats } from "@/features/bets/types/bet.types";
-import { INITIAL_BANKROLL } from "@/features/bets/hooks/useBetStats";
 
 export function KpiCards({ stats }: { stats: BetStats }) {
   return (
@@ -9,7 +8,7 @@ export function KpiCards({ stats }: { stats: BetStats }) {
       <StatCard
         label="Bankroll"
         value={fEUR(stats.currentBankroll)}
-        hint={`Inicial ${fEUR(INITIAL_BANKROLL)}`}
+        hint={`Inicial ${fEUR(stats.baseBankroll)}`}
       />
       <StatCard
         label="Profit"

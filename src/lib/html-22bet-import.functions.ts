@@ -59,7 +59,7 @@ function parseEuro(s: string | null | undefined): number | null {
 function ddmmyyyyToIso(s: string): string | null {
   const m = s.match(/(\d{2})\.(\d{2})\.(\d{4})(?:\s*\|\s*(\d{2}:\d{2}))?/);
   if (!m) return null;
-  
+
   const year = parseInt(m[3], 10);
   const month = parseInt(m[2], 10) - 1;
   const day = parseInt(m[1], 10);

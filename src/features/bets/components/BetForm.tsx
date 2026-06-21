@@ -110,9 +110,7 @@ export function BetForm({ onDone, bet }: Props) {
         <Controller
           name="bet_date"
           control={form.control}
-          render={({ field }) => (
-            <DateTimePicker value={field.value} onChange={field.onChange} />
-          )}
+          render={({ field }) => <DateTimePicker value={field.value} onChange={field.onChange} />}
         />
       </Field>
       <Field label="Tipster *" error={form.formState.errors.tipster?.message}>

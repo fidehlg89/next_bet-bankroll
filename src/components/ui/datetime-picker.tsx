@@ -5,11 +5,7 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 
 interface DateTimePickerProps {
@@ -18,14 +14,12 @@ interface DateTimePickerProps {
 }
 
 export function DateTimePicker({ value, onChange }: DateTimePickerProps) {
-  const [date, setDate] = React.useState<Date | undefined>(
-    value ? new Date(value) : undefined
-  );
-  
+  const [date, setDate] = React.useState<Date | undefined>(value ? new Date(value) : undefined);
+
   const [time, setTime] = React.useState<string>(
-    value 
+    value
       ? `${new Date(value).getHours().toString().padStart(2, "0")}:${new Date(value).getMinutes().toString().padStart(2, "0")}`
-      : "12:00"
+      : "12:00",
   );
 
   React.useEffect(() => {
@@ -33,7 +27,9 @@ export function DateTimePicker({ value, onChange }: DateTimePickerProps) {
       const d = new Date(value);
       if (!isNaN(d.getTime())) {
         setDate(d);
-        setTime(`${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`);
+        setTime(
+          `${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`,
+        );
       }
     }
   }, [value]);
@@ -66,17 +62,18 @@ export function DateTimePicker({ value, onChange }: DateTimePickerProps) {
           variant={"outline"}
           className={cn(
             "w-full justify-start text-left font-normal",
-            !date && "text-muted-foreground"
+            !date && "text-muted-foreground",
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "dd/MM/yyyy, HH:mm", { locale: es }) : <span>Seleccionar fecha y hora</span>}
+          {date ? (
+            format(date, "dd/MM/yyyy, HH:mm", { locale: es })
+          ) : (
+            <span>Seleccionar fecha y hora</span>
+          )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent 
-        className="w-[var(--radix-popover-trigger-width)] p-0" 
-        align="start"
-      >
+      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
         <div className="flex justify-center">
           <Calendar
             mode="single"
@@ -91,12 +88,7 @@ export function DateTimePicker({ value, onChange }: DateTimePickerProps) {
         </div>
         <div className="p-3 border-t border-border flex items-center justify-between gap-2">
           <span className="text-sm font-medium">Hora</span>
-          <Input 
-            type="time" 
-            value={time} 
-            onChange={handleTimeChange} 
-            className="w-[120px]"
-          />
+          <Input type="time" value={time} onChange={handleTimeChange} className="w-[120px]" />
         </div>
       </PopoverContent>
     </Popover>
