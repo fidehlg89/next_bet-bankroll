@@ -31,6 +31,7 @@ export interface BetStats {
   yield: number;
   avgOdds: number;
   avgStake: number;
+  baseBankroll: number;
   currentBankroll: number;
   bestWin: number;
   worstLoss: number;

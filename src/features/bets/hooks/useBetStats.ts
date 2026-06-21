@@ -1,11 +1,24 @@
 import { useMemo } from "react";
 import { calcCurrentStreak, calcWinRate, calcYield } from "@/shared/lib/bet-calc";
 import type { Bet, BetStats } from "../types/bet.types";
+import type { BankrollTransaction } from "../types/transaction.types";
 
 export const INITIAL_BANKROLL = 108.64; // banca semilla declarada en el Sheet
 
-export function useBetStats(bets: Bet[] | undefined, initialBankroll = INITIAL_BANKROLL): BetStats {
+export function useBetStats(
+  bets: Bet[] | undefined,
+  transactions?: BankrollTransaction[]
+): BetStats {
   return useMemo(() => {
+    let baseBankroll = INITIAL_BANKROLL;
+    if (transactions && transactions.length > 0) {
+      baseBankroll = transactions.reduce((acc, t) => {
+        if (t.type === "deposit" || t.type === "initial") return acc + Number(t.amount);
+        if (t.type === "withdrawal") return acc - Number(t.amount);
+        return acc;
+      }, 0);
+    }
+
     const list = bets ?? [];
     const settled = list.filter((b) => b.result !== null);
     const wins = settled.filter((b) => b.result === "W").length;
@@ -35,11 +48,12 @@ export function useBetStats(bets: Bet[] | undefined, initialBankroll = INITIAL_B
       yield: calcYield(profit, stakedForYield),
       avgOdds: parseFloat(avgOdds.toFixed(3)),
       avgStake: parseFloat(avgStake.toFixed(2)),
-      currentBankroll: parseFloat((initialBankroll + profit).toFixed(2)),
+      baseBankroll: parseFloat(baseBankroll.toFixed(2)),
+      currentBankroll: parseFloat((baseBankroll + profit).toFixed(2)),
       bestWin,
       worstLoss,
       currentStreak: calcCurrentStreak(list),
       totalStaked: parseFloat(totalStaked.toFixed(2)),
     };
-  }, [bets, initialBankroll]);
+  }, [bets, transactions]);
 }
