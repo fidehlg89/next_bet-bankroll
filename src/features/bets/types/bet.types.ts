@@ -1,6 +1,6 @@
 export type BetResult = "W" | "L" | "P";
 export type BetType = "Simple" | "Combinada" | "Bono";
-export type Market = "Football" | "Basketball" | "Tennis" | "Baseball" | "Combinada";
+export type Market = "Football" | "Basketball" | "Tennis" | "Baseball" | "Combinada" | "Hockey" | "Volleyball" | "UFC";
 
 export interface Bet {
   id: string;
