@@ -19,19 +19,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useCreateBankrollTransaction } from "@/features/bets/hooks/useBankrollTransactions";
 import { Wallet } from "lucide-react";
 
 const formSchema = z.object({
-  type: z.enum(["deposit", "withdrawal", "initial"]),
-  amount: z.coerce.number().positive("El monto debe ser mayor a 0"),
+  newBalance: z.coerce.number().min(0, "El valor no puede ser negativo"),
   transaction_date: z.string().min(1, "La fecha es requerida"),
   notes: z.string().optional(),
 });
@@ -49,26 +41,41 @@ export function BankrollAdjustmentModal({ currentBankroll = 0 }: BankrollAdjustm
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      type: "deposit",
-      amount: currentBankroll,
+      newBalance: currentBankroll,
       transaction_date: new Date().toISOString().split("T")[0],
       notes: "",
     },
   });
 
-  // Cuando el modal se abre, pre-carga el bankroll actual para que el usuario
-  // pueda ver el valor real y modificarlo directamente
+  // Cada vez que se abre el modal, pre-carga el bankroll actual
   useEffect(() => {
     if (open) {
-      form.setValue("amount", currentBankroll);
+      form.reset({
+        newBalance: currentBankroll,
+        transaction_date: new Date().toISOString().split("T")[0],
+        notes: "",
+      });
     }
   }, [open, currentBankroll, form]);
 
   const onSubmit = async (values: FormValues) => {
+    const delta = parseFloat((values.newBalance - currentBankroll).toFixed(2));
+
+    // Si no hay cambio, no hacemos nada
+    if (delta === 0) {
+      setOpen(false);
+      return;
+    }
+
+    const type = delta > 0 ? "deposit" : "withdrawal";
+    const amount = Math.abs(delta);
+
     try {
       await createTransaction({
-        ...values,
+        type,
+        amount,
         transaction_date: new Date(values.transaction_date).toISOString(),
+        notes: values.notes,
       });
       setOpen(false);
       form.reset();
@@ -76,6 +83,9 @@ export function BankrollAdjustmentModal({ currentBankroll = 0 }: BankrollAdjustm
       console.error(error);
     }
   };
+
+  const watchedBalance = form.watch("newBalance");
+  const delta = typeof watchedBalance === "number" ? parseFloat((watchedBalance - currentBankroll).toFixed(2)) : 0;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -93,36 +103,18 @@ export function BankrollAdjustmentModal({ currentBankroll = 0 }: BankrollAdjustm
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="type"
+              name="newBalance"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tipo de movimiento</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleccionar tipo" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="deposit">Ingreso (+)</SelectItem>
-                      <SelectItem value="withdrawal">Retiro (-)</SelectItem>
-                      <SelectItem value="initial">Ajuste Inicial</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="amount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Monto (€)</FormLabel>
+                  <FormLabel>Banca actual (€)</FormLabel>
                   <FormControl>
                     <Input type="number" step="0.01" {...field} />
                   </FormControl>
+                  {delta !== 0 && (
+                    <p className={`text-xs font-medium ${delta > 0 ? "text-green-500" : "text-red-500"}`}>
+                      {delta > 0 ? `+${delta.toFixed(2)} €` : `${delta.toFixed(2)} €`} respecto al valor actual
+                    </p>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
