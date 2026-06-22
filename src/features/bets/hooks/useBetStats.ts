@@ -58,11 +58,7 @@ export function useBetStats(
       avgStake: parseFloat(avgStake.toFixed(2)),
       initialBankroll: parseFloat(initialBankroll.toFixed(2)),
       baseBankroll: parseFloat(baseBankroll.toFixed(2)),
-      // Cuando el usuario ajustó manualmente, currentBankroll = baseBankroll exacto.
-      // Sin ajuste manual, se añade el profit de apuestas al hardcoded seed.
-      currentBankroll: hasManualTransactions
-        ? parseFloat(baseBankroll.toFixed(2))
-        : parseFloat((baseBankroll + profit).toFixed(2)),
+      currentBankroll: parseFloat((baseBankroll + profit).toFixed(2)),
       bestWin,
       worstLoss,
       currentStreak: calcCurrentStreak(list),

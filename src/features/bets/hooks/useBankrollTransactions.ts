@@ -139,10 +139,11 @@ export const useSetBankroll = () => {
         },
       ];
 
-      // 3. Calcular el ajuste: newBalance = initial + adjustment
-      // El profit de apuestas se muestra APARTE en el KPI de Profit,
-      // no se suma aquí para que el bankroll muestre exactamente lo que el usuario pone.
-      const adjustment = parseFloat((newBalance - initialBalance).toFixed(2));
+      // 3. Ajuste para que: baseBankroll + profit_actual = newBalance
+      //    → adjustment = newBalance - initialBalance - profit
+      //    Así, cuando entren nuevas apuestas, el profit crece/baja y el
+      //    bankroll mostrado cambia automáticamente respecto al newBalance fijado.
+      const adjustment = parseFloat((newBalance - initialBalance - profit).toFixed(2));
       if (Math.abs(adjustment) >= 0.01) {
         records.push({
           user_id: user.id,
