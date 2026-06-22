@@ -10,9 +10,10 @@ export function useBetStats(
   transactions?: BankrollTransaction[],
 ): BetStats {
   return useMemo(() => {
+    const hasManualTransactions = transactions && transactions.length > 0;
     let baseBankroll = INITIAL_BANKROLL;
-    if (transactions && transactions.length > 0) {
-      baseBankroll = transactions.reduce((acc, t) => {
+    if (hasManualTransactions) {
+      baseBankroll = transactions!.reduce((acc, t) => {
         if (t.type === "deposit" || t.type === "initial") return acc + Number(t.amount);
         if (t.type === "withdrawal") return acc - Number(t.amount);
         return acc;
@@ -49,7 +50,11 @@ export function useBetStats(
       avgOdds: parseFloat(avgOdds.toFixed(3)),
       avgStake: parseFloat(avgStake.toFixed(2)),
       baseBankroll: parseFloat(baseBankroll.toFixed(2)),
-      currentBankroll: parseFloat((baseBankroll + profit).toFixed(2)),
+      // Si el usuario ajustó manualmente la banca, mostramos ese valor exacto.
+      // El profit se muestra siempre por separado en su propio KPI.
+      currentBankroll: hasManualTransactions
+        ? parseFloat(baseBankroll.toFixed(2))
+        : parseFloat((baseBankroll + profit).toFixed(2)),
       bestWin,
       worstLoss,
       currentStreak: calcCurrentStreak(list),
