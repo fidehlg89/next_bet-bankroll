@@ -12,10 +12,17 @@ export function useBetStats(
   return useMemo(() => {
     const hasManualTransactions = transactions && transactions.length > 0;
     let baseBankroll = INITIAL_BANKROLL;
+    let initialBankroll = INITIAL_BANKROLL;
     if (hasManualTransactions) {
+      // baseBankroll: suma de TODAS las transacciones (este es el bankroll actual)
       baseBankroll = transactions!.reduce((acc, t) => {
         if (t.type === "deposit" || t.type === "initial") return acc + Number(t.amount);
         if (t.type === "withdrawal") return acc - Number(t.amount);
+        return acc;
+      }, 0);
+      // initialBankroll: solo las transacciones "initial" (para mostrar "Inicial X €")
+      initialBankroll = transactions!.reduce((acc, t) => {
+        if (t.type === "initial") return acc + Number(t.amount);
         return acc;
       }, 0);
     }
@@ -49,9 +56,10 @@ export function useBetStats(
       yield: calcYield(profit, stakedForYield),
       avgOdds: parseFloat(avgOdds.toFixed(3)),
       avgStake: parseFloat(avgStake.toFixed(2)),
+      initialBankroll: parseFloat(initialBankroll.toFixed(2)),
       baseBankroll: parseFloat(baseBankroll.toFixed(2)),
-      // Si el usuario ajustó manualmente la banca, mostramos ese valor exacto.
-      // El profit se muestra siempre por separado en su propio KPI.
+      // Cuando el usuario ajustó manualmente, currentBankroll = baseBankroll exacto.
+      // Sin ajuste manual, se añade el profit de apuestas al hardcoded seed.
       currentBankroll: hasManualTransactions
         ? parseFloat(baseBankroll.toFixed(2))
         : parseFloat((baseBankroll + profit).toFixed(2)),

@@ -8,7 +8,7 @@ export function KpiCards({ stats }: { stats: BetStats }) {
       <StatCard
         label="Bankroll"
         value={fEUR(stats.currentBankroll)}
-        hint={`Inicial ${fEUR(stats.baseBankroll)}`}
+        hint={`Inicial ${fEUR(stats.initialBankroll)}`}
       />
       <StatCard
         label="Profit"
