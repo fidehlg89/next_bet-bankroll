@@ -154,9 +154,7 @@ export const useSetBankroll = () => {
         });
       }
 
-      const { error: insError } = await supabase
-        .from("bankroll_transactions")
-        .insert(records);
+      const { error: insError } = await supabase.from("bankroll_transactions").insert(records);
       if (insError) throw insError;
     },
     onSuccess: () => {

@@ -67,7 +67,11 @@ export function InitialBankrollModal({ baseBankroll = 0 }: InitialBankrollModalP
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-2 text-muted-foreground hover:text-foreground"
+        >
           <Settings2 className="h-4 w-4" />
           Editar Inicial
         </Button>
@@ -77,7 +81,8 @@ export function InitialBankrollModal({ baseBankroll = 0 }: InitialBankrollModalP
           <DialogTitle>Editar Banca Inicial</DialogTitle>
         </DialogHeader>
         <p className="text-sm text-muted-foreground -mt-2">
-          Establece el capital de arranque de tu banca. Esto no afecta a tus apuestas ni a tu P&L, solo cambia el valor base desde el que se calcula el bankroll actual.
+          Establece el capital de arranque de tu banca. Esto no afecta a tus apuestas ni a tu P&L,
+          solo cambia el valor base desde el que se calcula el bankroll actual.
         </p>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

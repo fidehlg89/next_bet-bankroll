@@ -27,11 +27,8 @@ function renderModal() {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <QueryClientProvider client={qc}>
-      <BankrollAdjustmentModal
-        currentBankroll={CURRENT_BANKROLL}
-        baseBankroll={BASE_BANKROLL}
-      />
-    </QueryClientProvider>
+      <BankrollAdjustmentModal currentBankroll={CURRENT_BANKROLL} baseBankroll={BASE_BANKROLL} />
+    </QueryClientProvider>,
   );
 }
 
@@ -86,7 +83,7 @@ describe("BankrollAdjustmentModal", () => {
         expect.objectContaining({
           type: "deposit",
           amount: parseFloat((160 - CURRENT_BANKROLL).toFixed(2)),
-        })
+        }),
       );
     });
   });
@@ -107,7 +104,7 @@ describe("BankrollAdjustmentModal", () => {
         expect.objectContaining({
           type: "withdrawal",
           amount: parseFloat((CURRENT_BANKROLL - 140).toFixed(2)),
-        })
+        }),
       );
     });
   });
@@ -124,9 +121,7 @@ describe("BankrollAdjustmentModal", () => {
     await userEvent.click(screen.getByRole("button", { name: /guardar ajuste/i }));
 
     await waitFor(() => {
-      expect(mockUpsertInitial).toHaveBeenCalledWith(
-        expect.objectContaining({ amount: 120 })
-      );
+      expect(mockUpsertInitial).toHaveBeenCalledWith(expect.objectContaining({ amount: 120 }));
     });
   });
 

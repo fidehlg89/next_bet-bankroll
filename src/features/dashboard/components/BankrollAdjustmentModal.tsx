@@ -104,7 +104,6 @@ export function BankrollAdjustmentModal({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-
             <FormField
               control={form.control}
               name="initialBalance"
@@ -135,8 +134,8 @@ export function BankrollAdjustmentModal({
                         delta > 0 ? "text-green-500" : "text-red-500"
                       }`}
                     >
-                      {delta > 0 ? `+${delta.toFixed(2)} €` : `${delta.toFixed(2)} €`}{" "}
-                      respecto al valor actual
+                      {delta > 0 ? `+${delta.toFixed(2)} €` : `${delta.toFixed(2)} €`} respecto al
+                      valor actual
                     </p>
                   )}
                   <FormMessage />
