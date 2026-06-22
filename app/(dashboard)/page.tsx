@@ -33,6 +33,7 @@ export default function DashboardPage() {
         <BankrollAdjustmentModal
           currentBankroll={stats.currentBankroll}
           baseBankroll={stats.baseBankroll}
+          profit={stats.profit}
         />
       </div>
       <KpiCards stats={stats} />

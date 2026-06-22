@@ -19,15 +19,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  useCreateBankrollTransaction,
-  useUpsertInitialBankroll,
-} from "@/features/bets/hooks/useBankrollTransactions";
+import { useSetBankroll } from "@/features/bets/hooks/useBankrollTransactions";
 import { Wallet } from "lucide-react";
 
 const formSchema = z.object({
-  newBalance: z.coerce.number().min(0, "El valor no puede ser negativo"),
   initialBalance: z.coerce.number().min(0, "El valor no puede ser negativo"),
+  newBalance: z.coerce.number().min(0, "El valor no puede ser negativo"),
   transaction_date: z.string().min(1, "La fecha es requerida"),
   notes: z.string().optional(),
 });
@@ -35,23 +32,27 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 interface BankrollAdjustmentModalProps {
+  /** Valor total calculado: baseBankroll + profit (lo que se muestra en el KPI) */
   currentBankroll?: number;
+  /** Suma de todas las transacciones (initial + deposits - withdrawals) */
   baseBankroll?: number;
+  /** P&L generado por apuestas (no se toca aquí) */
+  profit?: number;
 }
 
 export function BankrollAdjustmentModal({
   currentBankroll = 0,
   baseBankroll = 0,
+  profit = 0,
 }: BankrollAdjustmentModalProps) {
   const [open, setOpen] = useState(false);
-  const { mutateAsync: createTransaction, isPending: isAdjusting } = useCreateBankrollTransaction();
-  const { mutateAsync: upsertInitial, isPending: isUpdatingInitial } = useUpsertInitialBankroll();
+  const { mutateAsync: setBankroll, isPending } = useSetBankroll();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      newBalance: currentBankroll,
       initialBalance: baseBankroll,
+      newBalance: currentBankroll,
       transaction_date: new Date().toISOString().split("T")[0],
       notes: "",
     },
@@ -60,8 +61,8 @@ export function BankrollAdjustmentModal({
   useEffect(() => {
     if (open) {
       form.reset({
-        newBalance: currentBankroll,
         initialBalance: baseBankroll,
+        newBalance: currentBankroll,
         transaction_date: new Date().toISOString().split("T")[0],
         notes: "",
       });
@@ -69,39 +70,14 @@ export function BankrollAdjustmentModal({
   }, [open, currentBankroll, baseBankroll, form]);
 
   const onSubmit = async (values: FormValues) => {
-    const isPending = isAdjusting || isUpdatingInitial;
-    if (isPending) return;
-
-    const promises: Promise<void>[] = [];
-
-    // Ajuste de banca actual
-    const delta = parseFloat((values.newBalance - currentBankroll).toFixed(2));
-    if (delta !== 0) {
-      promises.push(
-        createTransaction({
-          type: delta > 0 ? "deposit" : "withdrawal",
-          amount: Math.abs(delta),
-          transaction_date: new Date(values.transaction_date).toISOString(),
-          notes: values.notes,
-        })
-      );
-    }
-
-    // Ajuste de banca inicial (solo si cambió)
-    const initialDelta = parseFloat((values.initialBalance - baseBankroll).toFixed(2));
-    if (initialDelta !== 0) {
-      promises.push(
-        upsertInitial({ amount: values.initialBalance, notes: values.notes })
-      );
-    }
-
-    if (promises.length === 0) {
-      setOpen(false);
-      return;
-    }
-
     try {
-      await Promise.all(promises);
+      await setBankroll({
+        initialBalance: values.initialBalance,
+        newBalance: values.newBalance,
+        profit,
+        transactionDate: new Date(values.transaction_date).toISOString(),
+        notes: values.notes,
+      });
       setOpen(false);
     } catch (error) {
       console.error(error);
@@ -153,8 +129,14 @@ export function BankrollAdjustmentModal({
                     <Input type="number" step="0.01" {...field} />
                   </FormControl>
                   {delta !== 0 && (
-                    <p className={`text-xs font-medium ${delta > 0 ? "text-green-500" : "text-red-500"}`}>
-                      {delta > 0 ? `+${delta.toFixed(2)} €` : `${delta.toFixed(2)} €`} respecto al valor actual
+                    <p
+                      data-testid="delta-indicator"
+                      className={`text-xs font-medium ${
+                        delta > 0 ? "text-green-500" : "text-red-500"
+                      }`}
+                    >
+                      {delta > 0 ? `+${delta.toFixed(2)} €` : `${delta.toFixed(2)} €`}{" "}
+                      respecto al valor actual
                     </p>
                   )}
                   <FormMessage />
@@ -191,8 +173,8 @@ export function BankrollAdjustmentModal({
             />
 
             <div className="flex justify-end pt-2">
-              <Button type="submit" disabled={isAdjusting || isUpdatingInitial}>
-                {isAdjusting || isUpdatingInitial ? "Guardando..." : "Guardar Ajuste"}
+              <Button type="submit" disabled={isPending}>
+                {isPending ? "Guardando..." : "Guardar Ajuste"}
               </Button>
             </div>
           </form>
