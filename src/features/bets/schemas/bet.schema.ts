@@ -20,7 +20,7 @@ export const betSchema = z.object({
   tipster: z.string().trim().min(1, "El tipster es obligatorio").max(80, "Máximo 80 caracteres"),
   odds: z.coerce
     .number({ message: "La cuota debe ser numérica" })
-    .min(1.01, "La cuota debe ser ≥ 1.01")
+    .min(0.01, "La cuota debe ser > 0")
     .max(1000, "La cuota debe ser ≤ 1000")
     .refine((n) => Number.isFinite(n), "Cuota inválida"),
   stake: z.coerce
