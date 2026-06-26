@@ -119,7 +119,44 @@ export type Database = {
         };
         Relationships: [];
       };
+      monthly_periods: {
+        Row: {
+          id: string;
+          user_id: string;
+          period_month: string;
+          opening_balance: number;
+          closing_balance: number | null;
+          notes: string | null;
+          closed_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          period_month: string;
+          opening_balance: number;
+          closing_balance?: number | null;
+          notes?: string | null;
+          closed_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          period_month?: string;
+          opening_balance?: number;
+          closing_balance?: number | null;
+          notes?: string | null;
+          closed_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
+
     Views: {
       v_bankroll_daily: {
         Row: {
