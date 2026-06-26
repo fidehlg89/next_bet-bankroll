@@ -5,7 +5,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -133,7 +138,9 @@ export function OpenPeriodModal({
                   <FormControl>
                     <Input type="number" step="0.01" {...field} />
                   </FormControl>
-                  <FormDescription>Include any capital you are adding this month.</FormDescription>
+                  <FormDescription>
+                    Include any capital you are adding this month.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
