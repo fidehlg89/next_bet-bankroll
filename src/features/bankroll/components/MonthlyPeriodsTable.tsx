@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useMonthlyPeriods, useUpdatePeriodOpeningBalance } from "@/features/bankroll/hooks/useMonthlyPeriods";
+import {
+  useMonthlyPeriods,
+  useUpdatePeriodOpeningBalance,
+} from "@/features/bankroll/hooks/useMonthlyPeriods";
 import { OpenPeriodModal } from "./OpenPeriodModal";
 import { fEUR, fPct } from "@/shared/lib/formatters";
 import { Button } from "@/components/ui/button";
@@ -29,9 +32,7 @@ function ProfitCell({ value }: { value: number | null }) {
   const isPos = value >= 0;
   return (
     <span
-      className={`flex items-center gap-1 font-medium ${
-        isPos ? "text-green-500" : "text-red-500"
-      }`}
+      className={`flex items-center gap-1 font-medium ${isPos ? "text-green-500" : "text-red-500"}`}
     >
       {isPos ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
       {isPos ? "+" : ""}
@@ -67,9 +68,7 @@ export function MonthlyPeriodsTable() {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-base font-semibold">Monthly Periods</h3>
-          <p className="text-xs text-muted-foreground">
-            History of your bankroll across periods
-          </p>
+          <p className="text-xs text-muted-foreground">History of your bankroll across periods</p>
         </div>
         <Button size="sm" variant="outline" onClick={() => setOpenModalOpen(true)}>
           <CalendarPlus className="h-4 w-4 mr-1.5" />
@@ -103,9 +102,7 @@ export function MonthlyPeriodsTable() {
                   <TableCell className="font-medium capitalize">
                     {formatMonth(period.period_month)}
                   </TableCell>
-                  <TableCell className="text-right">
-                    {fEUR(period.opening_balance)}
-                  </TableCell>
+                  <TableCell className="text-right">{fEUR(period.opening_balance)}</TableCell>
                   <TableCell className="text-right">
                     {period.closing_balance !== null ? (
                       fEUR(period.closing_balance)

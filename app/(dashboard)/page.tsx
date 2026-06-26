@@ -46,10 +46,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Active period banner */}
-      <ActivePeriodBanner
-        currentBankroll={stats.currentBankroll}
-        periodProfit={stats.profit}
-      />
+      <ActivePeriodBanner currentBankroll={stats.currentBankroll} periodProfit={stats.profit} />
 
       {/* KPIs */}
       <KpiCards stats={stats} />
