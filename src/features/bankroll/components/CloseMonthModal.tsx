@@ -5,12 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -132,9 +127,7 @@ export function CloseMonthModal({
             <div>
               <p className="text-muted-foreground text-xs">Period profit (bets)</p>
               <p
-                className={`font-semibold ${
-                  periodProfit >= 0 ? "text-green-500" : "text-red-500"
-                }`}
+                className={`font-semibold ${periodProfit >= 0 ? "text-green-500" : "text-red-500"}`}
               >
                 {periodProfit >= 0 ? "+" : ""}
                 {fEUR(periodProfit)}

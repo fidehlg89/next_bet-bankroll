@@ -23,8 +23,7 @@ export function toFirstOfMonth(date: Date = new Date()): string {
 /** Enriches a raw DB row with derived status, profit, and yield fields */
 function enrichPeriod(p: MonthlyPeriod): MonthlyPeriodEnriched {
   const isClosed = p.closing_balance !== null && p.closed_at !== null;
-  const profit =
-    isClosed ? parseFloat((p.closing_balance! - p.opening_balance).toFixed(2)) : null;
+  const profit = isClosed ? parseFloat((p.closing_balance! - p.opening_balance).toFixed(2)) : null;
   const yieldPct =
     profit !== null && p.opening_balance > 0
       ? parseFloat(((profit / p.opening_balance) * 100).toFixed(2))
@@ -76,9 +75,7 @@ export async function fetchActivePeriod(): Promise<MonthlyPeriodEnriched | null>
 /**
  * Opens a new monthly period. Throws if a period for that month already exists.
  */
-export async function openMonthlyPeriod(
-  input: MonthlyPeriodInsert
-): Promise<MonthlyPeriod> {
+export async function openMonthlyPeriod(input: MonthlyPeriodInsert): Promise<MonthlyPeriod> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -126,7 +123,7 @@ export async function closeMonthlyPeriod(input: ClosePeriodInput): Promise<Month
 export async function updatePeriodOpeningBalance(
   id: string,
   opening_balance: number,
-  notes?: string | null
+  notes?: string | null,
 ): Promise<MonthlyPeriod> {
   const { data, error } = await supabase
     .from("monthly_periods")
