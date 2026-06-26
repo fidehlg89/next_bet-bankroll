@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { BankrollTransaction, BankrollTransactionInput } from "../types/transaction.types";
+import type { TablesInsert } from "@/integrations/supabase/types";
 
 export const useBankrollTransactions = () =>
   useQuery({
@@ -129,7 +130,7 @@ export const useSetBankroll = () => {
       if (delError) throw delError;
 
       // 2. Insertar la transacción inicial
-      const records: object[] = [
+      const records: TablesInsert<"bankroll_transactions">[] = [
         {
           user_id: user.id,
           type: "initial",
