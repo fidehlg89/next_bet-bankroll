@@ -30,7 +30,11 @@ export default function DashboardPage() {
           <h1 className="font-display text-2xl font-semibold tracking-tight">Dashboard</h1>
           <p className="text-sm text-muted-foreground">Visión general de tu banca.</p>
         </div>
-        <BankrollAdjustmentModal />
+        <BankrollAdjustmentModal
+          currentBankroll={stats.currentBankroll}
+          baseBankroll={stats.initialBankroll}
+          profit={stats.profit}
+        />
       </div>
       <KpiCards stats={stats} />
       <BankrollChart data={bankroll} />

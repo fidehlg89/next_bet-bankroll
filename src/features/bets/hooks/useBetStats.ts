@@ -10,11 +10,19 @@ export function useBetStats(
   transactions?: BankrollTransaction[],
 ): BetStats {
   return useMemo(() => {
+    const hasManualTransactions = transactions && transactions.length > 0;
     let baseBankroll = INITIAL_BANKROLL;
-    if (transactions && transactions.length > 0) {
-      baseBankroll = transactions.reduce((acc, t) => {
+    let initialBankroll = INITIAL_BANKROLL;
+    if (hasManualTransactions) {
+      // baseBankroll: suma de TODAS las transacciones (este es el bankroll actual)
+      baseBankroll = transactions!.reduce((acc, t) => {
         if (t.type === "deposit" || t.type === "initial") return acc + Number(t.amount);
         if (t.type === "withdrawal") return acc - Number(t.amount);
+        return acc;
+      }, 0);
+      // initialBankroll: solo las transacciones "initial" (para mostrar "Inicial X €")
+      initialBankroll = transactions!.reduce((acc, t) => {
+        if (t.type === "initial") return acc + Number(t.amount);
         return acc;
       }, 0);
     }
@@ -48,6 +56,7 @@ export function useBetStats(
       yield: calcYield(profit, stakedForYield),
       avgOdds: parseFloat(avgOdds.toFixed(3)),
       avgStake: parseFloat(avgStake.toFixed(2)),
+      initialBankroll: parseFloat(initialBankroll.toFixed(2)),
       baseBankroll: parseFloat(baseBankroll.toFixed(2)),
       currentBankroll: parseFloat((baseBankroll + profit).toFixed(2)),
       bestWin,

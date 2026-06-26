@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -19,51 +19,76 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useCreateBankrollTransaction } from "@/features/bets/hooks/useBankrollTransactions";
+import { useSetBankroll } from "@/features/bets/hooks/useBankrollTransactions";
 import { Wallet } from "lucide-react";
 
 const formSchema = z.object({
-  type: z.enum(["deposit", "withdrawal", "initial"]),
-  amount: z.coerce.number().positive("El monto debe ser mayor a 0"),
+  initialBalance: z.coerce.number().min(0, "El valor no puede ser negativo"),
+  newBalance: z.coerce.number().min(0, "El valor no puede ser negativo"),
   transaction_date: z.string().min(1, "La fecha es requerida"),
   notes: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function BankrollAdjustmentModal() {
+interface BankrollAdjustmentModalProps {
+  /** Valor total calculado: baseBankroll + profit (lo que se muestra en el KPI) */
+  currentBankroll?: number;
+  /** Suma de todas las transacciones (initial + deposits - withdrawals) */
+  baseBankroll?: number;
+  /** P&L generado por apuestas (no se toca aquí) */
+  profit?: number;
+}
+
+export function BankrollAdjustmentModal({
+  currentBankroll = 0,
+  baseBankroll = 0,
+  profit = 0,
+}: BankrollAdjustmentModalProps) {
   const [open, setOpen] = useState(false);
-  const { mutateAsync: createTransaction, isPending } = useCreateBankrollTransaction();
+  const { mutateAsync: setBankroll, isPending } = useSetBankroll();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      type: "deposit",
-      amount: 0,
+      initialBalance: baseBankroll,
+      newBalance: currentBankroll,
       transaction_date: new Date().toISOString().split("T")[0],
       notes: "",
     },
   });
 
+  useEffect(() => {
+    if (open) {
+      form.reset({
+        initialBalance: baseBankroll,
+        newBalance: currentBankroll,
+        transaction_date: new Date().toISOString().split("T")[0],
+        notes: "",
+      });
+    }
+  }, [open, currentBankroll, baseBankroll, form]);
+
   const onSubmit = async (values: FormValues) => {
     try {
-      await createTransaction({
-        ...values,
-        transaction_date: new Date(values.transaction_date).toISOString(),
+      await setBankroll({
+        initialBalance: values.initialBalance,
+        newBalance: values.newBalance,
+        profit,
+        transactionDate: new Date(values.transaction_date).toISOString(),
+        notes: values.notes,
       });
       setOpen(false);
-      form.reset();
     } catch (error) {
       console.error(error);
     }
   };
+
+  const watchedBalance = form.watch("newBalance");
+  const delta =
+    typeof watchedBalance === "number"
+      ? parseFloat((watchedBalance - currentBankroll).toFixed(2))
+      : 0;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -81,22 +106,13 @@ export function BankrollAdjustmentModal() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="type"
+              name="initialBalance"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tipo de movimiento</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleccionar tipo" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="deposit">Ingreso (+)</SelectItem>
-                      <SelectItem value="withdrawal">Retiro (-)</SelectItem>
-                      <SelectItem value="initial">Ajuste Inicial</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <FormLabel>Banca inicial (€)</FormLabel>
+                  <FormControl>
+                    <Input type="number" step="0.01" {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -104,13 +120,24 @@ export function BankrollAdjustmentModal() {
 
             <FormField
               control={form.control}
-              name="amount"
+              name="newBalance"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Monto (€)</FormLabel>
+                  <FormLabel>Banca actual (€)</FormLabel>
                   <FormControl>
                     <Input type="number" step="0.01" {...field} />
                   </FormControl>
+                  {delta !== 0 && (
+                    <p
+                      data-testid="delta-indicator"
+                      className={`text-xs font-medium ${
+                        delta > 0 ? "text-green-500" : "text-red-500"
+                      }`}
+                    >
+                      {delta > 0 ? `+${delta.toFixed(2)} €` : `${delta.toFixed(2)} €`} respecto al
+                      valor actual
+                    </p>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}

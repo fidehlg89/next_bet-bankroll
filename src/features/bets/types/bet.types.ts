@@ -39,6 +39,9 @@ export interface BetStats {
   yield: number;
   avgOdds: number;
   avgStake: number;
+  /** Suma solo de transacciones tipo "initial" → se muestra como "Inicial X €" */
+  initialBankroll: number;
+  /** Suma de TODAS las transacciones → el bankroll real actual */
   baseBankroll: number;
   currentBankroll: number;
   bestWin: number;
