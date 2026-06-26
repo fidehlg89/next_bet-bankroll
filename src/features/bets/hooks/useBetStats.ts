@@ -8,8 +8,6 @@ export const INITIAL_BANKROLL = 108.64; // banca semilla declarada en el Sheet
 export function useBetStats(
   bets: Bet[] | undefined,
   transactions?: BankrollTransaction[],
-  /** When set, overrides initialBankroll with the active period's opening balance */
-  activePeriodOpeningBalance?: number | null,
 ): BetStats {
   return useMemo(() => {
     const hasManualTransactions = transactions && transactions.length > 0;
@@ -47,11 +45,6 @@ export function useBetStats(
     const pnls = settled.map((b) => Number(b.pnl ?? 0));
     const bestWin = pnls.length ? Math.max(...pnls) : 0;
     const worstLoss = pnls.length ? Math.min(...pnls) : 0;
-    // When a monthly period is active, use its opening_balance as the
-    // displayed "initial" figure so the KPI reflects the current period start.
-    const displayedInitial =
-      activePeriodOpeningBalance != null ? activePeriodOpeningBalance : initialBankroll;
-
     return {
       totalPicks: list.length,
       wins,
@@ -63,7 +56,7 @@ export function useBetStats(
       yield: calcYield(profit, stakedForYield),
       avgOdds: parseFloat(avgOdds.toFixed(3)),
       avgStake: parseFloat(avgStake.toFixed(2)),
-      initialBankroll: parseFloat(displayedInitial.toFixed(2)),
+      initialBankroll: parseFloat(initialBankroll.toFixed(2)),
       baseBankroll: parseFloat(baseBankroll.toFixed(2)),
       currentBankroll: parseFloat((baseBankroll + profit).toFixed(2)),
       bestWin,
@@ -71,5 +64,5 @@ export function useBetStats(
       currentStreak: calcCurrentStreak(list),
       totalStaked: parseFloat(totalStaked.toFixed(2)),
     };
-  }, [bets, transactions, activePeriodOpeningBalance]);
+  }, [bets, transactions]);
 }
