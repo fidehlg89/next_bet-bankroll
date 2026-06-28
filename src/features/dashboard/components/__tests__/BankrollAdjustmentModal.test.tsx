@@ -21,15 +21,15 @@ vi.mock("@/features/bets/hooks/useBankrollTransactions", () => ({
 
 // ── Helper ─────────────────────────────────────────────────────────────────
 const CURRENT_BANKROLL = 151.68;
-const INITIAL_BANKROLL = 100.00;
+const INITIAL_BANKROLL = 100.0;
 
 function renderModal() {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <QueryClientProvider client={qc}>
-      <BankrollAdjustmentModal 
-        currentBankroll={CURRENT_BANKROLL} 
-        initialBankroll={INITIAL_BANKROLL} 
+      <BankrollAdjustmentModal
+        currentBankroll={CURRENT_BANKROLL}
+        initialBankroll={INITIAL_BANKROLL}
       />
     </QueryClientProvider>,
   );
@@ -131,7 +131,7 @@ describe("BankrollAdjustmentModal", () => {
 
     await waitFor(() => {
       expect(mockUpsertInitialBankroll).toHaveBeenCalledWith(
-        expect.objectContaining({ amount: 120 })
+        expect.objectContaining({ amount: 120 }),
       );
     });
     expect(mockSetBankroll).not.toHaveBeenCalled();
@@ -156,13 +156,11 @@ describe("BankrollAdjustmentModal", () => {
 
     await waitFor(() => {
       expect(mockUpsertInitialBankroll).toHaveBeenCalledWith(
-        expect.objectContaining({ amount: 120 })
+        expect.objectContaining({ amount: 120 }),
       );
     });
     await waitFor(() => {
-      expect(mockSetBankroll).toHaveBeenCalledWith(
-        expect.objectContaining({ delta: 8.32 })
-      );
+      expect(mockSetBankroll).toHaveBeenCalledWith(expect.objectContaining({ delta: 8.32 }));
     });
   });
 });
