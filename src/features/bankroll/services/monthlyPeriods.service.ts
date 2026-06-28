@@ -160,7 +160,7 @@ export async function closeMonthlyPeriod(input: ClosePeriodInput): Promise<Month
  * Updates a period's details (e.g. for correcting manual errors).
  */
 export async function updateMonthlyPeriod(input: UpdatePeriodInput): Promise<MonthlyPeriod> {
-  const payload: any = {};
+  const payload: Record<string, unknown> = {};
   if (input.period_month !== undefined) payload.period_month = input.period_month;
   if (input.opening_balance !== undefined) payload.opening_balance = input.opening_balance;
   if (input.closing_balance !== undefined) payload.closing_balance = input.closing_balance;
