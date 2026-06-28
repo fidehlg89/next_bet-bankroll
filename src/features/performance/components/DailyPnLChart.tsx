@@ -8,6 +8,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { format } from "date-fns";
 import { fEUR } from "@/shared/lib/formatters";
 import type { DailyTipsterPoint } from "../hooks/usePerformance";
 
@@ -46,7 +47,7 @@ export function DailyPnLChart({
                 dataKey="date"
                 stroke="var(--color-muted-foreground)"
                 fontSize={11}
-                tickFormatter={(v: string) => v.slice(5)}
+                tickFormatter={(v: string) => format(new Date(v), "dd/MM")}
               />
               <YAxis
                 stroke="var(--color-muted-foreground)"
