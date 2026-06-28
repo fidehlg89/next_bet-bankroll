@@ -91,7 +91,7 @@ export function PeriodTransactionsModal({
         type,
         amount: Number(amount),
         transaction_date: new Date(date).toISOString(),
-        notes: notes || null,
+        notes: notes || undefined,
       });
       setAmount("");
       setNotes("");

@@ -40,8 +40,7 @@ export default function DashboardPage() {
         </div>
         <BankrollAdjustmentModal
           currentBankroll={stats.currentBankroll}
-          baseBankroll={stats.initialBankroll}
-          profit={stats.profit}
+          initialBankroll={stats.initialBankroll}
         />
       </div>
 
