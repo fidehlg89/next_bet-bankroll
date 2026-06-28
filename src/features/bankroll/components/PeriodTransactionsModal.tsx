@@ -53,14 +53,14 @@ export function PeriodTransactionsModal({
       const pMonth = parseInt(monthStr, 10) - 1;
 
       if (now.getFullYear() === pYear && now.getMonth() === pMonth) {
-         // Si es el mes actual, usamos la fecha y hora de hoy
-         const tzoffset = now.getTimezoneOffset() * 60000; 
-         const localISOTime = new Date(Date.now() - tzoffset).toISOString().slice(0, 16);
-         setDate(localISOTime);
+        // Si es el mes actual, usamos la fecha y hora de hoy
+        const tzoffset = now.getTimezoneOffset() * 60000;
+        const localISOTime = new Date(Date.now() - tzoffset).toISOString().slice(0, 16);
+        setDate(localISOTime);
       } else {
-         // Si es un mes pasado/futuro, ponemos por defecto el día 1 de ese mes a las 12:00
-         const monthFormatted = String(pMonth + 1).padStart(2, '0');
-         setDate(`${pYear}-${monthFormatted}-01T12:00`);
+        // Si es un mes pasado/futuro, ponemos por defecto el día 1 de ese mes a las 12:00
+        const monthFormatted = String(pMonth + 1).padStart(2, "0");
+        setDate(`${pYear}-${monthFormatted}-01T12:00`);
       }
     }
   }, [open, period]);
@@ -74,7 +74,7 @@ export function PeriodTransactionsModal({
   // Limites para el input de fecha (min y max del mes)
   const lastDay = new Date(pYear, pMonth + 1, 0).getDate();
   const minDate = `${pYearStr}-${pMonthStr}-01T00:00`;
-  const maxDate = `${pYearStr}-${pMonthStr}-${String(lastDay).padStart(2, '0')}T23:59`;
+  const maxDate = `${pYearStr}-${pMonthStr}-${String(lastDay).padStart(2, "0")}T23:59`;
 
   const periodTransactions = (allTransactions ?? []).filter((tx) => {
     // Usamos split para asegurar que obtenemos el año y mes correcto de la fecha de transacción en local
@@ -111,8 +111,7 @@ export function PeriodTransactionsModal({
       <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            Ingresos y Retiros -{" "}
-            {format(new Date(pYear, pMonth, 1), "MMMM yyyy", { locale: es })}
+            Ingresos y Retiros - {format(new Date(pYear, pMonth, 1), "MMMM yyyy", { locale: es })}
           </DialogTitle>
         </DialogHeader>
 

@@ -73,7 +73,15 @@ export const useDeleteBankrollTransaction = () => {
 export const useUpsertInitialBankroll = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ amount, notes, transactionDate }: { amount: number; notes?: string; transactionDate?: string }) => {
+    mutationFn: async ({
+      amount,
+      notes,
+      transactionDate,
+    }: {
+      amount: number;
+      notes?: string;
+      transactionDate?: string;
+    }) => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -89,7 +97,8 @@ export const useUpsertInitialBankroll = () => {
         .limit(1)
         .maybeSingle();
 
-      const finalDate = transactionDate ?? existingInitial?.transaction_date ?? new Date().toISOString();
+      const finalDate =
+        transactionDate ?? existingInitial?.transaction_date ?? new Date().toISOString();
 
       // 1. Borrar todas las transacciones "initial" del usuario
       const { error: delError } = await supabase

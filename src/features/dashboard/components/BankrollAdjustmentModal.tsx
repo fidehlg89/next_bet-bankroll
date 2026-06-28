@@ -19,7 +19,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useSetBankroll, useUpsertInitialBankroll } from "@/features/bets/hooks/useBankrollTransactions";
+import {
+  useSetBankroll,
+  useUpsertInitialBankroll,
+} from "@/features/bets/hooks/useBankrollTransactions";
 import { Wallet } from "lucide-react";
 
 const formSchema = z.object({
@@ -83,14 +86,13 @@ export function BankrollAdjustmentModal({
 
   const watchedBalance = form.watch("newBalance");
   const parsedBalance = Number(watchedBalance);
-  
+
   // Calculate delta against what the current bankroll SHOULD be based on the new initial bankroll
   const expectedCurrentBankroll = currentBankroll + (Number(watchedInitial) - initialBankroll);
-  
-  const delta =
-    !isNaN(parsedBalance)
-      ? parseFloat((parsedBalance - expectedCurrentBankroll).toFixed(2))
-      : 0;
+
+  const delta = !isNaN(parsedBalance)
+    ? parseFloat((parsedBalance - expectedCurrentBankroll).toFixed(2))
+    : 0;
 
   const initialDelta = Number(watchedInitial) - initialBankroll;
 
@@ -139,7 +141,8 @@ export function BankrollAdjustmentModal({
                   </FormControl>
                   {initialDelta !== 0 && (
                     <p className="text-xs font-medium text-amber-500">
-                      Modificarás el saldo inicial en {initialDelta > 0 ? `+${initialDelta.toFixed(2)}` : initialDelta.toFixed(2)} €
+                      Modificarás el saldo inicial en{" "}
+                      {initialDelta > 0 ? `+${initialDelta.toFixed(2)}` : initialDelta.toFixed(2)} €
                     </p>
                   )}
                   <FormMessage />
@@ -163,7 +166,8 @@ export function BankrollAdjustmentModal({
                         delta > 0 ? "text-green-500" : "text-red-500"
                       }`}
                     >
-                      {delta > 0 ? `+${delta.toFixed(2)} €` : `${delta.toFixed(2)} €`} como ajuste (Ingreso/Retiro extra)
+                      {delta > 0 ? `+${delta.toFixed(2)} €` : `${delta.toFixed(2)} €`} como ajuste
+                      (Ingreso/Retiro extra)
                     </p>
                   )}
                   <FormMessage />
