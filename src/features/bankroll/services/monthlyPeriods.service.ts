@@ -10,6 +10,7 @@ import type {
   MonthlyPeriodInsert,
   ClosePeriodInput,
   MonthlyPeriodEnriched,
+  UpdatePeriodInput,
 } from "../types/period.types";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -21,23 +22,57 @@ export function toFirstOfMonth(date: Date = new Date()): string {
 }
 
 /** Enriches a raw DB row with derived status, profit, and yield fields */
-function enrichPeriod(p: MonthlyPeriod): MonthlyPeriodEnriched {
+function enrichPeriod(
+  p: MonthlyPeriod,
+  txs: { type: string; amount: number; transaction_date: string }[],
+): MonthlyPeriodEnriched {
+  const periodDate = new Date(p.period_month);
+  const pYear = periodDate.getFullYear();
+  const pMonth = periodDate.getMonth();
+
+  let total_deposits = 0;
+  let total_withdrawals = 0;
+
+  txs.forEach((tx) => {
+    const txDate = new Date(tx.transaction_date);
+    if (txDate.getFullYear() === pYear && txDate.getMonth() === pMonth) {
+      if (tx.type === "deposit") total_deposits += tx.amount;
+      if (tx.type === "withdrawal") total_withdrawals += tx.amount;
+    }
+  });
+
   const isClosed = p.closing_balance !== null && p.closed_at !== null;
-  const profit = isClosed ? parseFloat((p.closing_balance! - p.opening_balance).toFixed(2)) : null;
+  const profit = isClosed
+    ? parseFloat(
+        (p.closing_balance! - (p.opening_balance + total_deposits - total_withdrawals)).toFixed(2),
+      )
+    : null;
+
+  const invested = p.opening_balance + total_deposits;
   const yieldPct =
-    profit !== null && p.opening_balance > 0
-      ? parseFloat(((profit / p.opening_balance) * 100).toFixed(2))
-      : null;
+    profit !== null && invested > 0 ? parseFloat(((profit / invested) * 100).toFixed(2)) : null;
 
   return {
     ...p,
     status: isClosed ? "closed" : "open",
     profit,
     yield: yieldPct,
+    total_deposits,
+    total_withdrawals,
   };
 }
 
 // ── Queries ───────────────────────────────────────────────────────────────
+
+async function fetchUserTransactions() {
+  const { data: txs, error: txsError } = await supabase
+    .from("bankroll_transactions")
+    .select("type, amount, transaction_date")
+    .in("type", ["deposit", "withdrawal"]);
+
+  if (txsError) throw txsError;
+  return txs ?? [];
+}
 
 /**
  * Fetches all monthly periods for the authenticated user,
@@ -50,7 +85,9 @@ export async function fetchMonthlyPeriods(): Promise<MonthlyPeriodEnriched[]> {
     .order("period_month", { ascending: false });
 
   if (error) throw error;
-  return (data ?? []).map(enrichPeriod);
+
+  const txs = await fetchUserTransactions();
+  return (data ?? []).map((p) => enrichPeriod(p, txs));
 }
 
 /**
@@ -67,7 +104,10 @@ export async function fetchActivePeriod(): Promise<MonthlyPeriodEnriched | null>
     .maybeSingle();
 
   if (error) throw error;
-  return data ? enrichPeriod(data) : null;
+  if (!data) return null;
+
+  const txs = await fetchUserTransactions();
+  return enrichPeriod(data, txs);
 }
 
 // ── Mutations ─────────────────────────────────────────────────────────────
@@ -117,21 +157,31 @@ export async function closeMonthlyPeriod(input: ClosePeriodInput): Promise<Month
 }
 
 /**
- * Updates a period's opening balance and/or notes.
- * Useful for corrections without closing/reopening the period.
+ * Updates a period's details (e.g. for correcting manual errors).
  */
-export async function updatePeriodOpeningBalance(
-  id: string,
-  opening_balance: number,
-  notes?: string | null,
-): Promise<MonthlyPeriod> {
+export async function updateMonthlyPeriod(input: UpdatePeriodInput): Promise<MonthlyPeriod> {
+  const payload: any = {};
+  if (input.period_month !== undefined) payload.period_month = input.period_month;
+  if (input.opening_balance !== undefined) payload.opening_balance = input.opening_balance;
+  if (input.closing_balance !== undefined) payload.closing_balance = input.closing_balance;
+  if (input.notes !== undefined) payload.notes = input.notes;
+
   const { data, error } = await supabase
     .from("monthly_periods")
-    .update({ opening_balance, notes: notes ?? null })
-    .eq("id", id)
+    .update(payload)
+    .eq("id", input.id)
     .select()
     .single();
 
   if (error) throw error;
   return data;
+}
+
+/**
+ * Deletes a monthly period.
+ */
+export async function deleteMonthlyPeriod(id: string): Promise<void> {
+  const { error } = await supabase.from("monthly_periods").delete().eq("id", id);
+
+  if (error) throw error;
 }

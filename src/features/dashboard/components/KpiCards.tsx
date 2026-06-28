@@ -1,6 +1,8 @@
 import { StatCard } from "@/shared/components/StatCard";
 import { fEUR, fPct } from "@/shared/lib/formatters";
 import type { BetStats } from "@/features/bets/types/bet.types";
+import { BankrollAdjustmentModal } from "@/features/dashboard/components/BankrollAdjustmentModal";
+import { InitialBankrollModal } from "@/features/dashboard/components/InitialBankrollModal";
 
 export function KpiCards({ stats }: { stats: BetStats }) {
   return (
@@ -8,7 +10,18 @@ export function KpiCards({ stats }: { stats: BetStats }) {
       <StatCard
         label="Bankroll"
         value={fEUR(stats.currentBankroll)}
-        hint={`Inicial ${fEUR(stats.initialBankroll)}`}
+        hint={
+          <div className="flex items-center gap-2">
+            <span>Inicial {fEUR(stats.initialBankroll)}</span>
+            <InitialBankrollModal baseBankroll={stats.initialBankroll} />
+          </div>
+        }
+        action={
+          <BankrollAdjustmentModal
+            currentBankroll={stats.currentBankroll}
+            initialBankroll={stats.initialBankroll}
+          />
+        }
       />
       <StatCard
         label="Profit"

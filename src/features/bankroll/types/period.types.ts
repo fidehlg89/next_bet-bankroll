@@ -32,11 +32,21 @@ export interface ClosePeriodInput {
   notes?: string | null;
 }
 
+export interface UpdatePeriodInput {
+  id: string;
+  period_month?: string;
+  opening_balance?: number;
+  closing_balance?: number | null;
+  notes?: string | null;
+}
+
 /** Derived helper – enriches MonthlyPeriod with computed fields */
 export interface MonthlyPeriodEnriched extends MonthlyPeriod {
   status: PeriodStatus;
-  /** closing_balance - opening_balance, null if still open */
+  /** closing_balance - (opening_balance + total_deposits - total_withdrawals), null if still open */
   profit: number | null;
-  /** profit / opening_balance * 100, null if still open */
+  /** profit / (opening_balance + total_deposits) * 100, null if still open */
   yield: number | null;
+  total_deposits: number;
+  total_withdrawals: number;
 }

@@ -37,8 +37,27 @@ export const useCreateBankrollTransaction = () => {
     onSuccess: () => {
       toast.success("Transacción registrada");
       qc.invalidateQueries({ queryKey: ["bankroll-transactions"] });
-      // Invalidate dependent dashboard stats
       qc.invalidateQueries({ queryKey: ["dashboard", "bankroll"] });
+      qc.invalidateQueries({ queryKey: ["monthly-periods"] });
+    },
+    onError: (error) => {
+      toast.error(`Error: ${error.message}`);
+    },
+  });
+};
+
+export const useDeleteBankrollTransaction = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("bankroll_transactions").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Transacción eliminada");
+      qc.invalidateQueries({ queryKey: ["bankroll-transactions"] });
+      qc.invalidateQueries({ queryKey: ["dashboard", "bankroll"] });
+      qc.invalidateQueries({ queryKey: ["monthly-periods"] });
     },
     onError: (error) => {
       toast.error(`Error: ${error.message}`);
@@ -54,11 +73,23 @@ export const useCreateBankrollTransaction = () => {
 export const useUpsertInitialBankroll = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ amount, notes }: { amount: number; notes?: string }) => {
+    mutationFn: async ({ amount, notes, transactionDate }: { amount: number; notes?: string; transactionDate?: string }) => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) throw new Error("No autenticado");
+
+      // 0. Obtener la transacción "initial" existente para preservar su fecha si no se provee una nueva
+      const { data: existingInitial } = await supabase
+        .from("bankroll_transactions")
+        .select("transaction_date")
+        .eq("user_id", user.id)
+        .eq("type", "initial")
+        .order("transaction_date", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+
+      const finalDate = transactionDate ?? existingInitial?.transaction_date ?? new Date().toISOString();
 
       // 1. Borrar todas las transacciones "initial" del usuario
       const { error: delError } = await supabase
@@ -73,7 +104,7 @@ export const useUpsertInitialBankroll = () => {
         user_id: user.id,
         type: "initial",
         amount,
-        transaction_date: new Date().toISOString(),
+        transaction_date: finalDate,
         notes: notes ?? null,
       });
       if (insError) throw insError;
@@ -90,72 +121,36 @@ export const useUpsertInitialBankroll = () => {
 };
 
 /**
- * Guarda la banca inicial y la banca actual de forma atómica:
- * 1. Borra TODAS las transacciones existentes del usuario.
- * 2. Crea una transacción "initial" con `initialBalance`.
- * 3. Si es necesario, crea una transacción "deposit" o "withdrawal" para
- *    que baseBankroll + profit = newBalance.
- *
- * Fórmula:
- *   baseBankroll  = initialBalance + adjustment
- *   currentBankroll = baseBankroll + profit = newBalance
- *   → adjustment = newBalance - initialBalance - profit
+ * Ajusta la banca actual insertando una transacción correctiva (deposit o withdrawal).
+ * No borra el historial de transacciones.
  */
 export const useSetBankroll = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({
-      initialBalance,
-      newBalance,
-      profit,
+      delta,
       transactionDate,
       notes,
     }: {
-      initialBalance: number;
-      newBalance: number;
-      profit: number;
+      delta: number;
       transactionDate: string;
       notes?: string;
     }) => {
+      if (delta === 0) return; // Nada que ajustar
+
       const {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) throw new Error("No autenticado");
 
-      // 1. Borrar TODAS las transacciones previas
-      const { error: delError } = await supabase
-        .from("bankroll_transactions")
-        .delete()
-        .eq("user_id", user.id);
-      if (delError) throw delError;
+      const { error: insError } = await supabase.from("bankroll_transactions").insert({
+        user_id: user.id,
+        type: delta > 0 ? "deposit" : "withdrawal",
+        amount: Math.abs(delta),
+        transaction_date: transactionDate,
+        notes: notes ?? "Ajuste manual de banca",
+      });
 
-      // 2. Insertar la transacción inicial
-      const records: TablesInsert<"bankroll_transactions">[] = [
-        {
-          user_id: user.id,
-          type: "initial",
-          amount: initialBalance,
-          transaction_date: transactionDate,
-          notes: notes ?? null,
-        },
-      ];
-
-      // 3. Ajuste para que: baseBankroll + profit_actual = newBalance
-      //    → adjustment = newBalance - initialBalance - profit
-      //    Así, cuando entren nuevas apuestas, el profit crece/baja y el
-      //    bankroll mostrado cambia automáticamente respecto al newBalance fijado.
-      const adjustment = parseFloat((newBalance - initialBalance - profit).toFixed(2));
-      if (Math.abs(adjustment) >= 0.01) {
-        records.push({
-          user_id: user.id,
-          type: adjustment > 0 ? "deposit" : "withdrawal",
-          amount: Math.abs(adjustment),
-          transaction_date: transactionDate,
-          notes: notes ?? null,
-        });
-      }
-
-      const { error: insError } = await supabase.from("bankroll_transactions").insert(records);
       if (insError) throw insError;
     },
     onSuccess: () => {

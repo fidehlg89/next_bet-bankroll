@@ -69,11 +69,12 @@ export function InitialBankrollModal({ baseBankroll = 0 }: InitialBankrollModalP
       <DialogTrigger asChild>
         <Button
           variant="ghost"
-          size="sm"
-          className="gap-2 text-muted-foreground hover:text-foreground"
+          size="icon"
+          className="h-5 w-5 text-muted-foreground hover:text-foreground"
+          title="Editar Banca Inicial"
         >
-          <Settings2 className="h-4 w-4" />
-          Editar Inicial
+          <Settings2 className="h-3 w-3" />
+          <span className="sr-only">Editar Inicial</span>
         </Button>
       </DialogTrigger>
       <DialogContent>

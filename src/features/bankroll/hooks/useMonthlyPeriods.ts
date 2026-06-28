@@ -10,10 +10,15 @@ import {
   fetchActivePeriod,
   openMonthlyPeriod,
   closeMonthlyPeriod,
-  updatePeriodOpeningBalance,
+  updateMonthlyPeriod,
+  deleteMonthlyPeriod,
   toFirstOfMonth,
 } from "../services/monthlyPeriods.service";
-import type { ClosePeriodInput, MonthlyPeriodInsert } from "../types/period.types";
+import type {
+  MonthlyPeriodInsert,
+  ClosePeriodInput,
+  UpdatePeriodInput,
+} from "../types/period.types";
 
 // ── Query Keys ─────────────────────────────────────────────────────────────
 
@@ -77,27 +82,36 @@ export function useCloseMonthlyPeriod() {
   });
 }
 
-/** Updates the opening balance of an existing period (correction) */
-export function useUpdatePeriodOpeningBalance() {
+/** Updates a period's details (correction) */
+export function useUpdateMonthlyPeriod() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      id,
-      opening_balance,
-      notes,
-    }: {
-      id: string;
-      opening_balance: number;
-      notes?: string | null;
-    }) => updatePeriodOpeningBalance(id, opening_balance, notes),
+    mutationFn: (input: UpdatePeriodInput) => updateMonthlyPeriod(input),
     onSuccess: () => {
-      toast.success("Opening balance updated");
+      toast.success("Period updated");
       qc.invalidateQueries({ queryKey: periodKeys.all });
       qc.invalidateQueries({ queryKey: periodKeys.active });
       qc.invalidateQueries({ queryKey: ["dashboard", "bankroll"] });
     },
     onError: (err: Error) => {
       toast.error(`Error updating period: ${err.message}`);
+    },
+  });
+}
+
+/** Deletes a period */
+export function useDeleteMonthlyPeriod() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deleteMonthlyPeriod(id),
+    onSuccess: () => {
+      toast.success("Period deleted");
+      qc.invalidateQueries({ queryKey: periodKeys.all });
+      qc.invalidateQueries({ queryKey: periodKeys.active });
+      qc.invalidateQueries({ queryKey: ["dashboard", "bankroll"] });
+    },
+    onError: (err: Error) => {
+      toast.error(`Error deleting period: ${err.message}`);
     },
   });
 }
