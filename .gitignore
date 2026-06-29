@@ -24,6 +24,7 @@ dist-ssr
 .nitro
 
 # Environment variables — NEVER commit these
+.env
 .env.local
 .env.*.local
 .dev.vars
