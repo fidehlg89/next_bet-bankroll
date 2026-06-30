@@ -43,7 +43,10 @@ export interface BetStats {
   initialBankroll: number;
   /** Suma de TODAS las transacciones → el bankroll real actual */
   baseBankroll: number;
+  /** Bankroll disponible: baseBankroll + profit - pendingStake */
   currentBankroll: number;
+  /** Stake total comprometido en picks sin resultado (en juego) */
+  pendingStake: number;
   bestWin: number;
   worstLoss: number;
   currentStreak: number;

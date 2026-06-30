@@ -34,7 +34,9 @@ export function useBetStats(
     const wins = settled.filter((b) => b.result === "W").length;
     const losses = settled.filter((b) => b.result === "L").length;
     const pushes = settled.filter((b) => b.result === "P").length;
-    const pending = list.length - settled.length;
+    const pendingBets = list.filter((b) => b.result === null);
+    const pending = pendingBets.length;
+    const pendingStake = pendingBets.reduce((s, b) => s + Number(b.stake), 0);
     const profit = settled.reduce((s, b) => s + Number(b.pnl ?? 0), 0);
     const stakedForYield = settled
       .filter((b) => b.bet_type !== "Bono")
@@ -65,7 +67,8 @@ export function useBetStats(
       avgStake: parseFloat(avgStake.toFixed(2)),
       initialBankroll: parseFloat(displayedInitial.toFixed(2)),
       baseBankroll: parseFloat(baseBankroll.toFixed(2)),
-      currentBankroll: parseFloat((baseBankroll + profit).toFixed(2)),
+      currentBankroll: parseFloat((baseBankroll + profit - pendingStake).toFixed(2)),
+      pendingStake: parseFloat(pendingStake.toFixed(2)),
       bestWin,
       worstLoss,
       currentStreak: calcCurrentStreak(list),
