@@ -7,9 +7,7 @@ import type { BankrollTransaction } from "../../types/transaction.types";
 // ── Fixtures ────────────────────────────────────────────────────────────────
 
 /** Crea una apuesta mínima con resultado (liquidada). */
-const makeSettledBet = (
-  overrides: Partial<Bet> & { result: "W" | "L" | "P" },
-): Bet => ({
+const makeSettledBet = (overrides: Partial<Bet> & { result: "W" | "L" | "P" }): Bet => ({
   id: crypto.randomUUID(),
   user_id: "u1",
   bet_date: "2025-01-01",
@@ -68,9 +66,7 @@ function runHook(
   transactions?: BankrollTransaction[],
   activePeriodOpeningBalance?: number | null,
 ) {
-  const { result } = renderHook(() =>
-    useBetStats(bets, transactions, activePeriodOpeningBalance),
-  );
+  const { result } = renderHook(() => useBetStats(bets, transactions, activePeriodOpeningBalance));
   return result.current;
 }
 
@@ -101,9 +97,7 @@ describe("useBetStats — pendingStake & currentBankroll (issue #30)", () => {
     // profit = 10 + (-5) = 5
     expect(stats.profit).toBe(5);
     // currentBankroll = INITIAL_BANKROLL + 5 - 0
-    expect(stats.currentBankroll).toBe(
-      parseFloat((INITIAL_BANKROLL + 5).toFixed(2)),
-    );
+    expect(stats.currentBankroll).toBe(parseFloat((INITIAL_BANKROLL + 5).toFixed(2)));
   });
 
   // ── Solo apuestas pendientes (issue #30 core) ────────────────────────────
@@ -174,10 +168,7 @@ describe("useBetStats — pendingStake & currentBankroll (issue #30)", () => {
   // ── Con transacciones de banca ───────────────────────────────────────────
 
   it("con transacciones: pendingStake se descuenta del baseBankroll correcto", () => {
-    const transactions = [
-      makeTransaction("initial", 200),
-      makeTransaction("deposit", 50),
-    ];
+    const transactions = [makeTransaction("initial", 200), makeTransaction("deposit", 50)];
     const bets = [
       makeSettledBet({ result: "W", stake: 10, odds: 2.0, pnl: 10 }),
       makePendingBet({ stake: 30 }),
@@ -194,10 +185,7 @@ describe("useBetStats — pendingStake & currentBankroll (issue #30)", () => {
   });
 
   it("con retiro en transacciones: pendingStake sigue descontándose correctamente", () => {
-    const transactions = [
-      makeTransaction("initial", 300),
-      makeTransaction("withdrawal", 50),
-    ];
+    const transactions = [makeTransaction("initial", 300), makeTransaction("withdrawal", 50)];
     const bets = [makePendingBet({ stake: 20 })];
     const stats = runHook(bets, transactions);
 
