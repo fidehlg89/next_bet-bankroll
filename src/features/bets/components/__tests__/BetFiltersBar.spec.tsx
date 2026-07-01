@@ -24,8 +24,8 @@ vi.mock("../../hooks/useBets", () => ({
 // • SelectValue  → renders the current value text.
 // • SelectContent → renders a visible <div> wrapping all children (no portal).
 // • SelectItem   → renders an <option> element with the right role + value.
-vi.mock("@/components/ui/select", () => {
-  const React = require("react");
+vi.mock("@/components/ui/select", async () => {
+  const React = await import("react");
 
   function Select({
     value,
