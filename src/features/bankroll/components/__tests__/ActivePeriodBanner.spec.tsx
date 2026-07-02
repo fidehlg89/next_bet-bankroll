@@ -88,9 +88,11 @@ describe("ActivePeriodBanner", () => {
       // Depending on locale, "2025-06" might render as "junio de 2025"
       // we check for "2025" and some substring of the month, or just the badge
       expect(screen.getByText(/active/i)).toBeInTheDocument();
-      expect(screen.getByText((content, element) => {
-        return content.includes("Opening") && content.includes("1000") && content.includes("Day");
-      })).toBeInTheDocument();
+      expect(
+        screen.getByText((content, element) => {
+          return content.includes("Opening") && content.includes("1000") && content.includes("Day");
+        }),
+      ).toBeInTheDocument();
     });
 
     it("displays positive profit in green with a '+' sign", () => {
