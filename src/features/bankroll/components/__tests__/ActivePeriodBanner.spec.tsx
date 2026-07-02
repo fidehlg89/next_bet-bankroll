@@ -13,7 +13,13 @@ vi.mock("@/features/bankroll/hooks/useMonthlyPeriods", () => ({
 
 // Mock the modals so we can verify they receive the open state correctly
 vi.mock("../OpenPeriodModal", () => ({
-  OpenPeriodModal: ({ open, onOpenChange }: any) =>
+  OpenPeriodModal: ({
+    open,
+    onOpenChange,
+  }: {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+  }) =>
     open ? (
       <div data-testid="open-modal">
         <button onClick={() => onOpenChange(false)}>Close OpenModal</button>
@@ -22,7 +28,19 @@ vi.mock("../OpenPeriodModal", () => ({
 }));
 
 vi.mock("../CloseMonthModal", () => ({
-  CloseMonthModal: ({ open, onOpenChange, period, currentBankroll, periodProfit }: any) =>
+  CloseMonthModal: ({
+    open,
+    onOpenChange,
+    period,
+    currentBankroll,
+    periodProfit,
+  }: {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    period: Record<string, unknown>;
+    currentBankroll: number;
+    periodProfit: number;
+  }) =>
     open ? (
       <div
         data-testid="close-modal"
