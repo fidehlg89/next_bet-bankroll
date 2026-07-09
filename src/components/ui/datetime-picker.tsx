@@ -34,12 +34,17 @@ export function DateTimePicker({ value, onChange }: DateTimePickerProps) {
     }
   }, [value]);
 
+  const getNominalTime = (d: Date) => {
+    const pad = (n: number) => n.toString().padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+
   const handleSelect = (selectedDate: Date | undefined) => {
     if (selectedDate) {
       const [hours, minutes] = time.split(":");
       selectedDate.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
       setDate(selectedDate);
-      onChange?.(selectedDate.toISOString());
+      onChange?.(getNominalTime(selectedDate));
     }
   };
 
@@ -51,7 +56,7 @@ export function DateTimePicker({ value, onChange }: DateTimePickerProps) {
       const newDate = new Date(date);
       newDate.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
       setDate(newDate);
-      onChange?.(newDate.toISOString());
+      onChange?.(getNominalTime(newDate));
     }
   };
 
