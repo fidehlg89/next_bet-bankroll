@@ -72,10 +72,11 @@ export function BankrollChart({ data }: { data: Point[] }) {
                 strokeDasharray="3 3"
                 opacity={0.5}
                 label={{
-                  value: `Max: ${fEUR(max)}`,
-                  position: "insideBottomRight",
+                  value: fEUR(max),
+                  position: "insideBottomLeft",
                   fill: "var(--color-muted-foreground)",
                   fontSize: 11,
+                  dy: -4,
                 }}
               />
               <ReferenceLine
@@ -84,10 +85,11 @@ export function BankrollChart({ data }: { data: Point[] }) {
                 strokeDasharray="3 3"
                 opacity={0.3}
                 label={{
-                  value: `Med: ${fEUR(avg)}`,
-                  position: "insideBottomRight",
+                  value: fEUR(avg),
+                  position: "insideBottomLeft",
                   fill: "var(--color-muted-foreground)",
                   fontSize: 11,
+                  dy: -4,
                 }}
               />
               <ReferenceLine
@@ -96,10 +98,11 @@ export function BankrollChart({ data }: { data: Point[] }) {
                 strokeDasharray="3 3"
                 opacity={0.5}
                 label={{
-                  value: `Min: ${fEUR(min)}`,
-                  position: "insideTopRight",
+                  value: fEUR(min),
+                  position: "insideTopLeft",
                   fill: "var(--color-muted-foreground)",
                   fontSize: 11,
+                  dy: 4,
                 }}
               />
               <Area

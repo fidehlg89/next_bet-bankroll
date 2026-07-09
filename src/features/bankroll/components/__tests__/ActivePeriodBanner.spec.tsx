@@ -129,7 +129,7 @@ describe("ActivePeriodBanner", () => {
       render(<ActivePeriodBanner currentBankroll={900} periodProfit={-10.2} />);
 
       const profitText = screen.getByText((content, element) => {
-        return content.includes("-") && content.includes("10") && content.includes("so far");
+        return content.includes("(") && content.includes("10") && content.includes("so far");
       });
       expect(profitText).toBeInTheDocument();
       expect(profitText).toHaveClass("text-red-500");
