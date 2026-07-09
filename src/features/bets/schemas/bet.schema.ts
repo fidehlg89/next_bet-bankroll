@@ -28,7 +28,7 @@ export const betSchema = z.object({
     .positive("El stake debe ser > 0")
     .max(1_000_000, "Stake demasiado alto")
     .refine((n) => Number.isFinite(n), "Stake inválido"),
-  result: z.enum(RESULTS).optional().or(z.literal("")),
+  result: z.enum(RESULTS).optional().or(z.literal("")).or(z.literal("pending-_")),
   notes: z.string().trim().max(500, "Máximo 500 caracteres").optional().or(z.literal("")),
 });
 
