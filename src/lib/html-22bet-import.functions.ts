@@ -66,9 +66,9 @@ function ddmmyyyyToIso(s: string): string | null {
 
   if (m[4]) {
     const [hours, minutes] = m[4].split(":").map(Number);
-    return new Date(year, month, day, hours, minutes).toISOString();
+    return new Date(Date.UTC(year, month, day, hours, minutes)).toISOString();
   }
-  return new Date(year, month, day, 0, 0).toISOString();
+  return new Date(Date.UTC(year, month, day, 0, 0)).toISOString();
 }
 
 export function validate22BetHtml(html: string): void {
