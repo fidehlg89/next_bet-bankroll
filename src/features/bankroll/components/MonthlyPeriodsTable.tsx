@@ -64,7 +64,6 @@ function YieldCell({ value }: { value: number | null }) {
   const isPos = value >= 0;
   return (
     <span className={`font-medium ${isPos ? "text-green-500" : "text-red-500"}`}>
-      {isPos ? "+" : ""}
       {fPct(value)}
     </span>
   );
