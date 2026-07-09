@@ -7,9 +7,12 @@ export const fPct = (v: number | null | undefined) => {
 };
 
 export const fDate = (d: string) =>
-  new Intl.DateTimeFormat("pt-PT", { day: "2-digit", month: "2-digit", year: "numeric" }).format(
-    new Date(d),
-  );
+  new Intl.DateTimeFormat("pt-PT", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(d));
 
 export const fDateTime = (d: string) =>
   new Intl.DateTimeFormat("pt-PT", {
@@ -18,10 +21,15 @@ export const fDateTime = (d: string) =>
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: "UTC",
   }).format(new Date(d));
 
 export const fMonth = (d: string) =>
-  new Intl.DateTimeFormat("pt-PT", { month: "long", year: "numeric" }).format(new Date(d));
+  new Intl.DateTimeFormat("pt-PT", {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(d));
 
 export const fOdds = (v: number) => Number(v).toFixed(3);
 

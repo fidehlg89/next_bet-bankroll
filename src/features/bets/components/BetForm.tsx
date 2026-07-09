@@ -32,7 +32,7 @@ export function BetForm({ onDone, bet }: Props) {
     const d = new Date(date);
     if (isNaN(d.getTime())) return "";
     const pad = (n: number) => n.toString().padStart(2, "0");
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}T${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
   };
 
   const todayTime = toDatetimeLocal(new Date());
@@ -75,8 +75,13 @@ export function BetForm({ onDone, bet }: Props) {
 
   const onSubmit = form.handleSubmit(
     async (vals) => {
+      const submitDate =
+        vals.bet_date.length === 16
+          ? vals.bet_date + ":00Z"
+          : new Date(vals.bet_date).toISOString();
       const clean = {
         ...vals,
+        bet_date: submitDate,
         result: (vals.result as string) === "pending-_" ? ("" as const) : vals.result,
       };
       if (isEdit && bet) {
