@@ -127,7 +127,11 @@ Before committing, always bump the project version in `package.json` and update 
 # Bump version (choose patch, minor, or major based on SemVer)
 npm version patch --no-git-tag-version
 ```
-Then manually edit `CHANGELOG.md` to add the new version, date, and description of your changes.
+
+**CRITICAL:** You must also manually edit `CHANGELOG.md` to:
+1. Create a new heading for the version you just bumped to (e.g., `## [1.0.2] - YYYY-MM-DD`).
+2. Add a description of your changes under the appropriate category (`Added`, `Changed`, `Fixed`, etc.).
+3. Do not just leave changes under `[Unreleased]` if you are bumping the version.
 
 ---
 
