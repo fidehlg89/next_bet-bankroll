@@ -47,8 +47,16 @@ Format: `type(scope): description`
 
 *Enforcement:* If an agent is asked to commit work, it MUST review the number of changed files first. If the file count exceeds 20, the agent MUST stop, group the files into logical batches, and perform multiple sequential commits.
 
-## 6. Version Bumping & Changelog
-Whenever you resolve an issue, implement a feature, or fix a bug, you MUST:
-1. Bump the `version` field in `package.json` according to SemVer principles (`patch` for bugfixes, `minor` for new features, `major` for breaking changes).
-2. Update the `CHANGELOG.md` file in the root directory following the [Keep a Changelog](https://keepachangelog.com/) format.
-3. Include these changes as part of your final commit or pull request.
+## 6. 🚨 Version Bumping & Changelog (CRITICAL RULE) 🚨
+
+**REVISAR ESTO DE LAS VERSIONES ES MUY IMPORTANTE. ES UNA REGLA ESTRICTA.**
+Whenever you analyze an issue, develop a feature, or fix a bug, you **MUST** track the version properly. Do NOT skip this step under any circumstance.
+
+**Workflow at the time of development/review:**
+1. Determine the impact of your change (Patch for bugs, Minor for features, Major for breaking changes).
+2. Bump the `version` field in `package.json` accordingly (`npm version patch|minor|major --no-git-tag-version`).
+3. Update the `CHANGELOG.md` file in the root directory.
+   - Do NOT just dump changes into `[Unreleased]`.
+   - Create the specific version heading (e.g. `## [1.0.2] - YYYY-MM-DD`).
+   - Categorize changes (Added, Changed, Fixed).
+4. Include these version updates as part of your final commit or pull request.

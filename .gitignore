@@ -52,3 +52,4 @@ dist-ssr
 *.tsbuildinfo
 next-env.d.ts
 AGENTS.md
+.agents/rules/version_control.md
