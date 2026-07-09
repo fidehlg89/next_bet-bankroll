@@ -2,6 +2,7 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -15,6 +16,11 @@ interface Point {
 }
 
 export function BankrollChart({ data }: { data: Point[] }) {
+  const bankrolls = data.map((d) => d.bankroll);
+  const max = bankrolls.length > 0 ? Math.max(...bankrolls) : 0;
+  const min = bankrolls.length > 0 ? Math.min(...bankrolls) : 0;
+  const avg = bankrolls.length > 0 ? bankrolls.reduce((a, b) => a + b, 0) / bankrolls.length : 0;
+
   return (
     <div className="rounded-xl border border-border bg-card p-5">
       <div className="mb-4 flex items-baseline justify-between">
@@ -49,6 +55,7 @@ export function BankrollChart({ data }: { data: Point[] }) {
                 tickLine={false}
                 axisLine={false}
                 tickFormatter={(v) => fEUR(v)}
+                domain={["auto", "auto"]}
               />
               <Tooltip
                 contentStyle={{
@@ -58,6 +65,42 @@ export function BankrollChart({ data }: { data: Point[] }) {
                   fontSize: 12,
                 }}
                 formatter={(v: number) => [fEUR(v), "Bankroll"]}
+              />
+              <ReferenceLine
+                y={max}
+                stroke="var(--color-muted-foreground)"
+                strokeDasharray="3 3"
+                opacity={0.5}
+                label={{
+                  value: `Max: ${fEUR(max)}`,
+                  position: "insideBottomRight",
+                  fill: "var(--color-muted-foreground)",
+                  fontSize: 11,
+                }}
+              />
+              <ReferenceLine
+                y={avg}
+                stroke="var(--color-muted-foreground)"
+                strokeDasharray="3 3"
+                opacity={0.3}
+                label={{
+                  value: `Med: ${fEUR(avg)}`,
+                  position: "insideBottomRight",
+                  fill: "var(--color-muted-foreground)",
+                  fontSize: 11,
+                }}
+              />
+              <ReferenceLine
+                y={min}
+                stroke="var(--color-muted-foreground)"
+                strokeDasharray="3 3"
+                opacity={0.5}
+                label={{
+                  value: `Min: ${fEUR(min)}`,
+                  position: "insideTopRight",
+                  fill: "var(--color-muted-foreground)",
+                  fontSize: 11,
+                }}
               />
               <Area
                 type="monotone"
