@@ -1,5 +1,10 @@
-export const fEUR = (v: number | null | undefined) =>
-  new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" }).format(v ?? 0);
+export const fEUR = (v: number | null | undefined) => {
+  const num = v ?? 0;
+  const formatted = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" }).format(
+    Math.abs(num),
+  );
+  return num < 0 ? `(${formatted})` : formatted;
+};
 
 export const fPct = (v: number | null | undefined) => {
   const n = v ?? 0;
