@@ -21,6 +21,14 @@ export function BankrollChart({ data }: { data: Point[] }) {
   const min = bankrolls.length > 0 ? Math.min(...bankrolls) : 0;
   const avg = bankrolls.length > 0 ? bankrolls.reduce((a, b) => a + b, 0) / bankrolls.length : 0;
 
+  // Escala de 150 en 150
+  const startTick = Math.floor(min / 150) * 150;
+  const endTick = Math.ceil(max / 150) * 150;
+  const ticks = [];
+  for (let i = startTick; i <= endTick; i += 150) {
+    ticks.push(i);
+  }
+
   return (
     <div className="rounded-xl border border-border bg-card p-5">
       <div className="mb-4 flex items-baseline justify-between">
@@ -34,7 +42,7 @@ export function BankrollChart({ data }: { data: Point[] }) {
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data}>
+            <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="bk" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="var(--accent-green)" stopOpacity={0.35} />
@@ -42,20 +50,15 @@ export function BankrollChart({ data }: { data: Point[] }) {
                 </linearGradient>
               </defs>
               <CartesianGrid stroke="var(--color-border)" strokeDasharray="3 3" vertical={false} />
-              <XAxis
-                dataKey="date"
-                stroke="var(--color-muted-foreground)"
-                fontSize={11}
-                tickLine={false}
-                axisLine={false}
-              />
+              <XAxis dataKey="date" hide={true} scale="point" padding={{ left: 0, right: 0 }} />
               <YAxis
                 stroke="var(--color-muted-foreground)"
                 fontSize={11}
                 tickLine={false}
                 axisLine={false}
                 tickFormatter={(v) => fEUR(v)}
-                domain={["auto", "auto"]}
+                ticks={ticks}
+                domain={[startTick, endTick]}
               />
               <Tooltip
                 contentStyle={{
@@ -73,7 +76,7 @@ export function BankrollChart({ data }: { data: Point[] }) {
                 opacity={0.5}
                 label={{
                   value: fEUR(max),
-                  position: "insideBottomLeft",
+                  position: "insideBottomRight",
                   fill: "var(--color-muted-foreground)",
                   fontSize: 11,
                   dy: -4,
@@ -86,7 +89,7 @@ export function BankrollChart({ data }: { data: Point[] }) {
                 opacity={0.3}
                 label={{
                   value: fEUR(avg),
-                  position: "insideBottomLeft",
+                  position: "insideBottomRight",
                   fill: "var(--color-muted-foreground)",
                   fontSize: 11,
                   dy: -4,
@@ -99,7 +102,7 @@ export function BankrollChart({ data }: { data: Point[] }) {
                 opacity={0.5}
                 label={{
                   value: fEUR(min),
-                  position: "insideTopLeft",
+                  position: "insideTopRight",
                   fill: "var(--color-muted-foreground)",
                   fontSize: 11,
                   dy: 4,
