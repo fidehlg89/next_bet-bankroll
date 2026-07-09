@@ -42,7 +42,7 @@ export function BankrollChart({ data }: { data: Point[] }) {
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+            <AreaChart data={data} margin={{ top: 10, right: 60, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="bk" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="var(--accent-green)" stopOpacity={0.35} />
@@ -76,10 +76,9 @@ export function BankrollChart({ data }: { data: Point[] }) {
                 opacity={0.5}
                 label={{
                   value: fEUR(max),
-                  position: "insideBottomRight",
+                  position: "right",
                   fill: "var(--color-muted-foreground)",
                   fontSize: 11,
-                  dy: -4,
                 }}
               />
               <ReferenceLine
@@ -89,10 +88,9 @@ export function BankrollChart({ data }: { data: Point[] }) {
                 opacity={0.3}
                 label={{
                   value: fEUR(avg),
-                  position: "insideBottomRight",
+                  position: "right",
                   fill: "var(--color-muted-foreground)",
                   fontSize: 11,
-                  dy: -4,
                 }}
               />
               <ReferenceLine
@@ -102,10 +100,9 @@ export function BankrollChart({ data }: { data: Point[] }) {
                 opacity={0.5}
                 label={{
                   value: fEUR(min),
-                  position: "insideTopRight",
+                  position: "right",
                   fill: "var(--color-muted-foreground)",
                   fontSize: 11,
-                  dy: 4,
                 }}
               />
               <Area
