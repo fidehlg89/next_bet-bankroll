@@ -37,7 +37,7 @@ export function DailyPnLChart({
   const handleLegendClick = (e: unknown) => {
     const payload = e as { dataKey?: string | number | symbol };
     if (!payload?.dataKey) return;
-    
+
     const dataKey = String(payload.dataKey);
     setHiddenTipsters((prev) => {
       const next = new Set(prev);
