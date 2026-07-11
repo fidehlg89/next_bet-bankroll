@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-07-11
+
+### Added
+- **Date Range Filter**: Replaced the month filter dropdown with a `DateRangePicker` in the `BetFiltersBar` component to allow selecting custom time periods for filtering bets.
+
 ## [1.2.0] - 2026-07-11
 
 ### Added

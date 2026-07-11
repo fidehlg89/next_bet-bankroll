@@ -1,11 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Bet, BetResult, Market } from "../types/bet.types";
+import { format } from "date-fns";
+import { DateRange } from "react-day-picker";
 
 export interface BetFilters {
   tipster?: string;
   market?: Market | "all";
-  month?: string; // YYYY-MM
+  dateRange?: DateRange;
   result?: BetResult | "pending" | "all";
 }
 
@@ -20,12 +22,11 @@ export const useBets = (filters?: BetFilters) =>
         .order("created_at", { ascending: false });
       if (filters?.tipster && filters.tipster !== "all") q = q.eq("tipster", filters.tipster);
       if (filters?.market && filters.market !== "all") q = q.eq("market", filters.market);
-      if (filters?.month) {
-        const start = `${filters.month}-01`;
-        const [y, m] = filters.month.split("-").map(Number);
-        const next = new Date(Date.UTC(y, m, 1));
-        const end = next.toISOString().slice(0, 10);
-        q = q.gte("bet_date", start).lt("bet_date", end);
+      if (filters?.dateRange?.from) {
+        q = q.gte("bet_date", format(filters.dateRange.from, "yyyy-MM-dd"));
+      }
+      if (filters?.dateRange?.to) {
+        q = q.lte("bet_date", format(filters.dateRange.to, "yyyy-MM-dd"));
       }
       if (filters?.result === "pending") q = q.is("result", null);
       else if (filters?.result && filters.result !== "all") q = q.eq("result", filters.result);

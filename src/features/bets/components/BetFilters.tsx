@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+import { DateRangePicker } from "@/components/ui/date-range-picker";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import type { BetFilters } from "../hooks/useBets";
@@ -22,7 +22,7 @@ export function BetFiltersBar({ value, onChange }: Props) {
   const hasAny = !!(
     value.tipster ||
     (value.market && value.market !== "all") ||
-    value.month ||
+    value.dateRange?.from ||
     (value.result && value.result !== "all")
   );
   return (
@@ -71,13 +71,12 @@ export function BetFiltersBar({ value, onChange }: Props) {
       </div>
       <div>
         <label className="mb-3 block text-[10px] uppercase tracking-wider text-muted-foreground">
-          Mes
+          Rango de Fechas
         </label>
-        <Input
-          type="month"
-          className="w-[140px]"
-          value={value.month ?? ""}
-          onChange={(e) => onChange({ ...value, month: e.target.value || undefined })}
+        <DateRangePicker
+          className="w-[240px]"
+          value={value.dateRange}
+          onChange={(d) => onChange({ ...value, dateRange: d })}
         />
       </div>
       <div>
