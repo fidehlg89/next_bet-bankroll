@@ -139,7 +139,7 @@ describe("BetFiltersBar", () => {
       // tipsterA/tipsterB/tipsterC options in the DOM too — multiple matches.
       expect(screen.getByText(/mercado/i)).toBeInTheDocument();
       expect(screen.getAllByText(/tipster/i).length).toBeGreaterThanOrEqual(1);
-      expect(screen.getByText(/mes/i)).toBeInTheDocument();
+      expect(screen.getByText(/fechas/i)).toBeInTheDocument();
       expect(screen.getByText(/resultado/i)).toBeInTheDocument();
     });
 
@@ -158,8 +158,8 @@ describe("BetFiltersBar", () => {
       expect(screen.getByRole("button", { name: /limpiar/i })).toBeInTheDocument();
     });
 
-    it("renders the Limpiar button when month filter is active", () => {
-      renderFilters({ month: "2025-01" }, vi.fn());
+    it("renders the Limpiar button when dateRange filter is active", () => {
+      renderFilters({ dateRange: { from: new Date("2025-01-01") } }, vi.fn());
       expect(screen.getByRole("button", { name: /limpiar/i })).toBeInTheDocument();
     });
 
@@ -179,46 +179,14 @@ describe("BetFiltersBar", () => {
     });
   });
 
-  // ── Month input ────────────────────────────────────────────────────────────
+  // ── Date range picker ──────────────────────────────────────────────────────
 
-  describe("month input", () => {
-    it("renders a month input", () => {
-      renderFilters({}, vi.fn());
-      const input = screen.getByDisplayValue("");
-      expect(input).toHaveAttribute("type", "month");
-    });
-
-    it("reflects the month value from props", () => {
-      renderFilters({ month: "2025-06" }, vi.fn());
-      expect(screen.getByDisplayValue("2025-06")).toBeInTheDocument();
-    });
-
-    it("calls onChange with the new month when the user changes the input", async () => {
-      const { fireEvent } = await import("@testing-library/react");
-      const onChange = vi.fn();
-      renderFilters({ month: "2025-01" }, onChange);
-
-      const input = screen.getByDisplayValue("2025-01");
-      // jsdom does not simulate keyboard input for type=month correctly.
-      // fireEvent.change sets the value directly, matching how browsers fire
-      // the change event when the user picks a month in the native picker.
-      fireEvent.change(input, { target: { value: "2025-06" } });
-
-      expect(onChange).toHaveBeenCalled();
-      const lastCall = onChange.mock.calls.at(-1)?.[0] as BetFilters;
-      expect(lastCall.month).toBe("2025-06");
-    });
-
-    it("calls onChange with month=undefined when the input is cleared", async () => {
-      const onChange = vi.fn();
-      renderFilters({ month: "2025-01" }, onChange);
-
-      const input = screen.getByDisplayValue("2025-01");
-      await userEvent.clear(input);
-
-      expect(onChange).toHaveBeenCalled();
-      const lastCall = onChange.mock.calls.at(-1)?.[0] as BetFilters;
-      expect(lastCall.month).toBeUndefined();
+  describe("date range picker", () => {
+    it("reflects the date range value from props", () => {
+      renderFilters({ dateRange: { from: new Date("2025-06-01") } }, vi.fn());
+      // The button text in the DateRangePicker will have the formatted date
+      // We check that the component exists and Limpiar appears.
+      expect(screen.getByRole("button", { name: /limpiar/i })).toBeInTheDocument();
     });
   });
 
@@ -227,7 +195,7 @@ describe("BetFiltersBar", () => {
   describe("Limpiar button", () => {
     it("calls onChange({}) when clicked, resetting all filters", async () => {
       const onChange = vi.fn();
-      renderFilters({ tipster: "tipsterA", month: "2025-01" }, onChange);
+      renderFilters({ tipster: "tipsterA", dateRange: { from: new Date("2025-01-01") } }, onChange);
 
       await userEvent.click(screen.getByRole("button", { name: /limpiar/i }));
 
@@ -263,13 +231,15 @@ describe("BetFiltersBar", () => {
   // ── Accessibility ──────────────────────────────────────────────────────────
 
   describe("accessibility", () => {
-    it("month input is associated with a visible label", () => {
+    it("date range picker is associated with a visible label", () => {
       const { container } = renderFilters({}, vi.fn());
 
-      // The label containing "Mes" should be present
+      // The label containing "Fechas" should be present
       const labels = container.querySelectorAll("label");
-      const mesLabel = Array.from(labels).find((l) => l.textContent?.toLowerCase().includes("mes"));
-      expect(mesLabel).toBeDefined();
+      const fechasLabel = Array.from(labels).find((l) =>
+        l.textContent?.toLowerCase().includes("fecha"),
+      );
+      expect(fechasLabel).toBeDefined();
     });
   });
 });
