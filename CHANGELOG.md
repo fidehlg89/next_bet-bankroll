@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.6] - 2026-07-10
+
+### Fixed
+- **Bet Form Validation**: Changed minimum allowed odds from `0.5` to `0.01` in bet form validation schema to correctly allow sub-1.01 odds (e.g., `0.93` for certain markets).
+
 ## [1.1.5] - 2026-07-10
 
 ### Fixed
