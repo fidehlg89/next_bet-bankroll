@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-07-11
+
+### Added
+- **Result Distribution Values**: Enhanced the 'Distribución de Resultados' pie chart legend to display the exact number of picks next to each result type (e.g., `W (Ganadas) - 45`).
+
 ## [1.3.0] - 2026-07-11
 
 ### Added
