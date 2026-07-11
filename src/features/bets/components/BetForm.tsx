@@ -215,7 +215,7 @@ export function BetForm({ onDone, bet }: Props) {
         <Input type="number" step="0.001" {...form.register("odds")} className="font-mono-num" />
       </Field>
       <Field label="Stake (€) *" error={form.formState.errors.stake?.message}>
-        <Input type="number" step="0.01" {...form.register("stake")} className="font-mono-num" />
+        <Input type="number" step="0.001" {...form.register("stake")} className="font-mono-num" />
       </Field>
       <Field label="Resultado" error={form.formState.errors.result?.message}>
         <Select
