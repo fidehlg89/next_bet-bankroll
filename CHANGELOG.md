@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-07-11
+
+### Fixed
+- **Stake Decimals**: Changed the step interval in the `BetForm` stake input to `0.001` to allow values with three decimal places (e.g., `2.552`).
+
 ## [1.4.0] - 2026-07-11
 
 ### Added
