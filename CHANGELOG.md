@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-07-11
+
+### Added
+- **P&L Chart Filter**: Made the 'P&L acumulado por tipster' chart filterable. Users can now click on tipsters in the legend to toggle their visibility on the chart.
+
 ## [1.1.6] - 2026-07-10
 
 ### Fixed
