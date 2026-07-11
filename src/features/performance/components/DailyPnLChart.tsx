@@ -34,8 +34,11 @@ export function DailyPnLChart({
 }) {
   const [hiddenTipsters, setHiddenTipsters] = useState<Set<string>>(new Set());
 
-  const handleLegendClick = (e: { dataKey: string }) => {
-    const { dataKey } = e;
+  const handleLegendClick = (e: unknown) => {
+    const payload = e as { dataKey?: string | number | symbol };
+    if (!payload?.dataKey) return;
+    
+    const dataKey = String(payload.dataKey);
     setHiddenTipsters((prev) => {
       const next = new Set(prev);
       if (next.has(dataKey)) {
