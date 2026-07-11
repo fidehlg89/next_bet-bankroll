@@ -55,10 +55,11 @@ export function ResultDistributionChart({ data }: ResultDistributionChartProps) 
                   layout="vertical"
                   iconType="circle"
                   formatter={(value) => {
-                    if (value === "W") return "W (Ganadas)";
-                    if (value === "L") return "L (Perdidas)";
-                    if (value === "P") return "P (Nulas)";
-                    return value;
+                    const count = data.find((d) => d.name === value)?.value ?? 0;
+                    if (value === "W") return `W (Ganadas) - ${count}`;
+                    if (value === "L") return `L (Perdidas) - ${count}`;
+                    if (value === "P") return `P (Nulas) - ${count}`;
+                    return `${value} - ${count}`;
                   }}
                 />
               </PieChart>
