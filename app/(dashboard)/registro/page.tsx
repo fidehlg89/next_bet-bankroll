@@ -13,6 +13,7 @@ import { Plus, Download } from "lucide-react";
 import { BetForm } from "@/features/bets/components/BetForm";
 import { BetTable } from "@/features/bets/components/BetTable";
 import { BetFiltersBar } from "@/features/bets/components/BetFilters";
+import { BetSummary } from "@/features/bets/components/BetSummary";
 import { useBets, type BetFilters } from "@/features/bets/hooks/useBets";
 import { fDate } from "@/shared/lib/formatters";
 
@@ -90,6 +91,7 @@ export default function RegistroPage() {
       </div>
 
       <BetFiltersBar value={filters} onChange={setFilters} />
+      <BetSummary bets={bets} />
 
       {isLoading ? (
         <div className="h-32 animate-pulse rounded-xl border border-border bg-card" />
