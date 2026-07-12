@@ -50,10 +50,11 @@ export function ResultDistributionChart({ data }: ResultDistributionChartProps) 
                   itemStyle={{ color: "hsl(var(--foreground))" }}
                 />
                 <Legend
-                  verticalAlign="middle"
-                  align="right"
+                  verticalAlign="bottom"
+                  align="center"
                   layout="vertical"
                   iconType="circle"
+                  wrapperStyle={{ fontSize: "12px", paddingTop: "10px" }}
                   formatter={(value) => {
                     const count = data.find((d) => d.name === value)?.value ?? 0;
                     if (value === "W") return `W (Ganadas) - ${count}`;
