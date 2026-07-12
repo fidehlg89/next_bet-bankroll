@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.2] - 2026-07-12
+
+### Fixed
+- **Result Distribution Chart Layout**: Changed the legend layout to display in a column at the bottom with a smaller font (`12px`), ensuring the pie chart remains perfectly centered within its card.
+
 ## [1.4.1] - 2026-07-11
 
 ### Fixed
