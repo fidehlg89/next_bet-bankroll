@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { differenceInDays } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import type {
   MarketStat,
@@ -48,16 +49,29 @@ export const useTipsterStats = () =>
       // need yield per tipster from bets
       const { data: bets } = await supabase
         .from("bets")
-        .select("tipster, stake, bet_type, result")
+        .select("tipster, stake, bet_type, result, bet_date")
         .not("result", "is", null);
       const stakeMap = new Map<string, number>();
+      const dateMap = new Map<string, { min: string; max: string }>();
       for (const b of bets ?? []) {
-        if (b.bet_type === "Bono") continue;
-        stakeMap.set(b.tipster, (stakeMap.get(b.tipster) ?? 0) + Number(b.stake));
+        if (b.bet_type !== "Bono") {
+          stakeMap.set(b.tipster, (stakeMap.get(b.tipster) ?? 0) + Number(b.stake));
+        }
+        if (b.bet_date) {
+          const dates = dateMap.get(b.tipster) ?? { min: b.bet_date, max: b.bet_date };
+          if (b.bet_date < dates.min) dates.min = b.bet_date;
+          if (b.bet_date > dates.max) dates.max = b.bet_date;
+          dateMap.set(b.tipster, dates);
+        }
       }
       const result: TipsterStat[] = [];
       for (const [tipster, v] of map) {
         const stake = stakeMap.get(tipster) ?? 0;
+        const dates = dateMap.get(tipster);
+        let activeDays = 0;
+        if (dates) {
+          activeDays = Math.max(1, differenceInDays(new Date(dates.max), new Date(dates.min)) + 1);
+        }
         result.push({
           tipster,
           picks: v.picks,
@@ -67,6 +81,7 @@ export const useTipsterStats = () =>
             v.wins + v.losses ? Number(((v.wins / (v.wins + v.losses)) * 100).toFixed(2)) : 0,
           profit: Number(v.profit.toFixed(2)),
           yield: stake ? Number(((v.profit / stake) * 100).toFixed(2)) : 0,
+          activeDays,
         });
       }
       return result.sort((a, b) => b.profit - a.profit);

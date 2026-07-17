@@ -19,6 +19,7 @@ export function TipsterLeaderboard({ data }: { data: TipsterStat[] }) {
         <TableHeader>
           <TableRow className="border-border hover:bg-transparent">
             <TableHead>Tipster</TableHead>
+            <TableHead className="text-right">Días</TableHead>
             <TableHead className="text-right">P&amp;L</TableHead>
             <TableHead className="text-right">Yield</TableHead>
             <TableHead className="text-right">WR%</TableHead>
@@ -27,7 +28,7 @@ export function TipsterLeaderboard({ data }: { data: TipsterStat[] }) {
         <TableBody>
           {data.length === 0 && (
             <TableRow>
-              <TableCell colSpan={4} className="text-center text-sm text-muted-foreground py-6">
+              <TableCell colSpan={5} className="text-center text-sm text-muted-foreground py-6">
                 Sin datos
               </TableCell>
             </TableRow>
@@ -35,6 +36,7 @@ export function TipsterLeaderboard({ data }: { data: TipsterStat[] }) {
           {data.map((t) => (
             <TableRow key={t.tipster} className="border-border">
               <TableCell className="font-medium">{t.tipster}</TableCell>
+              <TableCell className="text-right text-muted-foreground">{t.activeDays}</TableCell>
               <TableCell className={`text-right font-mono-num ${pnlClass(t.profit)}`}>
                 {fEUR(t.profit)}
               </TableCell>

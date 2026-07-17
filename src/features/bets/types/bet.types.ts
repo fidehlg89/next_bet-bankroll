@@ -61,6 +61,7 @@ export interface TipsterStat {
   winRate: number;
   profit: number;
   yield: number;
+  activeDays: number;
 }
 
 export interface MarketStat {

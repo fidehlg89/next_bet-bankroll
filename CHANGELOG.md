@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-07-17
+
+### Added
+- **Tipster Active Days**: Added a new column "Días" to the Top Tipsters leaderboard on the dashboard to show how many days each tipster has been active (calculated as the difference between their first and last bet dates).
+
 ## [1.4.2] - 2026-07-12
 
 ### Fixed
