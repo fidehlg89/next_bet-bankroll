@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-07-18
+
+### Added
+- **Active Tipsters Configuration**: Added a new configuration dialog in the bet filters to enable or disable tipsters. Inactive tipsters are hidden from the filter dropdown and the daily P&L chart, but their data remains in overall statistics.
 ## [1.5.0] - 2026-07-17
 
 ### Added

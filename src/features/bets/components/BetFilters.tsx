@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import type { BetFilters } from "../hooks/useBets";
 import { useTipsterList } from "../hooks/useBets";
+import { ManageTipstersDialog } from "./ManageTipstersDialog";
+import { useTipsterSettingsStore } from "@/store/tipster-settings";
 
 interface Props {
   value: BetFilters;
@@ -19,6 +21,9 @@ interface Props {
 
 export function BetFiltersBar({ value, onChange }: Props) {
   const { data: tipsters } = useTipsterList();
+  const { inactiveTipsters } = useTipsterSettingsStore();
+  const activeTipsters = (tipsters ?? []).filter((t) => !inactiveTipsters.includes(t));
+
   const hasAny = !!(
     value.tipster ||
     (value.market && value.market !== "all") ||
@@ -52,22 +57,25 @@ export function BetFiltersBar({ value, onChange }: Props) {
         <label className="mb-3 block text-[10px] uppercase tracking-wider text-muted-foreground">
           Tipster
         </label>
-        <Select
-          value={value.tipster ?? "all"}
-          onValueChange={(v) => onChange({ ...value, tipster: v === "all" ? undefined : v })}
-        >
-          <SelectTrigger className="w-[160px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todos</SelectItem>
-            {(tipsters ?? []).map((t) => (
-              <SelectItem key={t} value={t}>
-                {t}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-2">
+          <Select
+            value={value.tipster ?? "all"}
+            onValueChange={(v) => onChange({ ...value, tipster: v === "all" ? undefined : v })}
+          >
+            <SelectTrigger className="w-[160px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos</SelectItem>
+              {activeTipsters.map((t) => (
+                <SelectItem key={t} value={t}>
+                  {t}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <ManageTipstersDialog />
+        </div>
       </div>
       <div>
         <label className="mb-3 block text-[10px] uppercase tracking-wider text-muted-foreground">
