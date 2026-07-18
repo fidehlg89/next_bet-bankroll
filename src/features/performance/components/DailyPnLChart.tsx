@@ -15,6 +15,7 @@ import { format } from "date-fns";
 import { fEUR } from "@/shared/lib/formatters";
 import type { DailyTipsterPoint } from "../hooks/usePerformance";
 import { Info } from "lucide-react";
+import { useTipsterSettingsStore } from "@/store/tipster-settings";
 
 const COLORS = [
   "var(--accent-green)",
@@ -33,6 +34,9 @@ export function DailyPnLChart({
   tipsters: string[];
 }) {
   const [hiddenTipsters, setHiddenTipsters] = useState<Set<string>>(new Set());
+  const { inactiveTipsters } = useTipsterSettingsStore();
+
+  const activeTipsters = tipsters.filter((t) => !inactiveTipsters.includes(t));
 
   const handleLegendClick = (e: unknown) => {
     const payload = e as { dataKey?: string | number | symbol };
@@ -96,7 +100,7 @@ export function DailyPnLChart({
                 wrapperStyle={{ fontSize: 11, cursor: "pointer" }}
                 onClick={handleLegendClick}
               />
-              {tipsters.map((t, i) => (
+              {activeTipsters.map((t, i) => (
                 <Line
                   key={t}
                   type="monotone"
