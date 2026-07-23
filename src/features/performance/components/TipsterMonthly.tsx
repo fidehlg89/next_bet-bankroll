@@ -8,8 +8,11 @@ import {
 } from "@/components/ui/table";
 import { fEUR, fMonth, fPct, pnlClass } from "@/shared/lib/formatters";
 import type { TipsterMonthlyRow } from "../hooks/usePerformance";
+import { useTipsterSettingsStore } from "@/store/tipster-settings";
 
 export function TipsterMonthlyTable({ rows }: { rows: TipsterMonthlyRow[] }) {
+  const inactiveTipsters = useTipsterSettingsStore((state) => state.inactiveTipsters);
+
   return (
     <div className="rounded-xl border border-border bg-card">
       <div className="border-b border-border px-5 py-3">
@@ -37,7 +40,11 @@ export function TipsterMonthlyTable({ rows }: { rows: TipsterMonthlyRow[] }) {
             )}
             {rows.map((r, i) => (
               <TableRow key={`${r.tipster}-${r.month}-${i}`} className="border-border">
-                <TableCell className="font-medium">{r.tipster}</TableCell>
+                <TableCell
+                  className={`font-medium ${inactiveTipsters.includes(r.tipster) ? "text-muted-foreground" : ""}`}
+                >
+                  {r.tipster}
+                </TableCell>
                 <TableCell className="text-sm text-muted-foreground capitalize">
                   {fMonth(r.month)}
                 </TableCell>
