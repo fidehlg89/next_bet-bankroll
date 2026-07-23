@@ -8,8 +8,11 @@ import {
 } from "@/components/ui/table";
 import { fEUR, fPct, pnlClass } from "@/shared/lib/formatters";
 import type { TipsterStat } from "@/features/bets/types/bet.types";
+import { useTipsterSettingsStore } from "@/store/tipster-settings";
 
 export function TipsterLeaderboard({ data }: { data: TipsterStat[] }) {
+  const inactiveTipsters = useTipsterSettingsStore((state) => state.inactiveTipsters);
+
   return (
     <div className="rounded-xl border border-border bg-card">
       <div className="border-b border-border px-5 py-3">
@@ -36,7 +39,11 @@ export function TipsterLeaderboard({ data }: { data: TipsterStat[] }) {
             )}
             {data.map((t) => (
               <TableRow key={t.tipster} className="border-border">
-                <TableCell className="font-medium">{t.tipster}</TableCell>
+                <TableCell
+                  className={`font-medium ${inactiveTipsters.includes(t.tipster) ? "text-muted-foreground" : ""}`}
+                >
+                  {t.tipster}
+                </TableCell>
                 <TableCell className="text-right text-muted-foreground">{t.activeDays}</TableCell>
                 <TableCell className={`text-right font-mono-num ${pnlClass(t.profit)}`}>
                   {fEUR(t.profit)}
