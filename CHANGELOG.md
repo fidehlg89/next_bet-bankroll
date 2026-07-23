@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.3] - 2026-07-23
+
+### Changed
+- **UI Scrollbars**: Implemented thinner custom scrollbars globally across the application for a cleaner and more modern look.
+
 ## [1.6.2] - 2026-07-23
 
 ### Fixed
