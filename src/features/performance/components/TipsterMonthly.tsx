@@ -15,7 +15,7 @@ export function TipsterMonthlyTable({ rows }: { rows: TipsterMonthlyRow[] }) {
       <div className="border-b border-border px-5 py-3">
         <h3 className="font-display text-base font-semibold">Tipster × Mes</h3>
       </div>
-      <div className="overflow-x-auto">
+      <div className="overflow-auto max-h-[500px]">
         <Table>
           <TableHeader>
             <TableRow className="border-border hover:bg-transparent">
