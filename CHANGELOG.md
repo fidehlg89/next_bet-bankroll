@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.1] - 2026-07-23
+
+### Fixed
+- **Tipster Lists Scroll**: Added a max-height of 500px and a scrollbar to the tipster lists on the dashboard to prevent the tables from growing indefinitely and taking up too much vertical space.
+
 ## [1.6.0] - 2026-07-18
 
 ### Added
