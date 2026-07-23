@@ -10,10 +10,20 @@ import { fEUR, fPct, pnlClass } from "@/shared/lib/formatters";
 import type { MarketStat } from "@/features/bets/types/bet.types";
 
 export function MarketTable({ data }: { data: MarketStat[] }) {
+  const totalProfit = data.reduce((acc, m) => acc + m.profit, 0);
+
   return (
     <div className="rounded-xl border border-border bg-card">
-      <div className="border-b border-border px-5 py-3">
+      <div className="flex items-center justify-between border-b border-border px-5 py-3">
         <h3 className="font-display text-base font-semibold">Rendimiento por mercado</h3>
+        {data.length > 0 && (
+          <div className="text-sm font-medium text-muted-foreground">
+            Total:{" "}
+            <span className={`font-mono-num ml-1 ${pnlClass(totalProfit)}`}>
+              {fEUR(totalProfit)}
+            </span>
+          </div>
+        )}
       </div>
       <Table>
         <TableHeader>

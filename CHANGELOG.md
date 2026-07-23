@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.5] - 2026-07-23
+
+### Added
+- **Market Table Total Profit**: Added a total profit indicator to the "Rendimiento por mercado" (Market Performance) table header to easily see the overall gain or loss across all markets.
+
 ## [1.6.3] - 2026-07-23
 
 ### Changed
