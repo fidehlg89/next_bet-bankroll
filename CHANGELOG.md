@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.7] - 2026-07-24
+
+### Added
+- **Component Unit Test Coverage**: Added comprehensive Vitest + Testing Library test suites for `MarketTable`, `KpiCards`, `TipsterLeaderboard`, `BestWorstPicks`, `MonthlyStats`, `WinStreak`, and `BetSummary` components (#96).
+
 ## [1.6.6] - 2026-07-24
 
 ### Fixed
