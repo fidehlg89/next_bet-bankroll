@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.8] - 2026-07-24
+
+### Fixed
+- **Import Page UI**: Replaced all occurrences of the term "sincronizar" with "importar" on the import page to unify the user interface wording around data import (#98).
+
 ## [1.6.7] - 2026-07-24
 
 ### Added
