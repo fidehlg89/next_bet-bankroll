@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.6] - 2026-07-24
+
+### Fixed
+- **Filter Reset Button Alignment**: Fixed height (`h-9`) of the "Limpiar" clear filters button in `BetFilters` component to align seamlessly with adjacent dropdown triggers (#94).
+
 ## [1.6.5] - 2026-07-23
 
 ### Added

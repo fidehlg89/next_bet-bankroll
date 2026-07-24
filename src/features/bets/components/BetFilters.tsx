@@ -108,7 +108,7 @@ export function BetFiltersBar({ value, onChange }: Props) {
         </Select>
       </div>
       {hasAny && (
-        <Button variant="ghost" size="sm" onClick={() => onChange({})} className="gap-1">
+        <Button variant="ghost" size="sm" onClick={() => onChange({})} className="h-9 gap-1">
           <X className="h-3 w-3" /> Limpiar
         </Button>
       )}
