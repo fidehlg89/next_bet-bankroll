@@ -88,7 +88,7 @@ export default function ImportarPage() {
       <div>
         <h1 className="font-display text-2xl font-semibold tracking-tight">Importar</h1>
         <p className="text-sm text-muted-foreground">
-          Sincroniza tu histórico desde Google Sheets o pega el HTML del historial de 22Bet.
+          Importa tu histórico desde Google Sheets o pega el HTML del historial de 22Bet.
         </p>
       </div>
 
@@ -109,7 +109,7 @@ export default function ImportarPage() {
             ) : (
               <Download className="h-4 w-4" />
             )}
-            {loading ? "Importando…" : "Sincronizar Sheet"}
+            {loading ? "Importando…" : "Importar Sheet"}
           </Button>
         </Card>
 
