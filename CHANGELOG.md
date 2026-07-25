@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-07-25
+
+### Removed
+- **Google Sheet Import**: Removed the Google Sheet import functionality from the UI and backend as it is no longer used, leaving only the 22Bet HTML import.
 ## [1.6.8] - 2026-07-24
 
 ### Fixed
