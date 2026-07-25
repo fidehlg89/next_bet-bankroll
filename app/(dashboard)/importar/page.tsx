@@ -5,13 +5,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Download, FileCode2, Loader2 } from "lucide-react";
+import { FileCode2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 export default function ImportarPage() {
   const qc = useQueryClient();
-  const [loading, setLoading] = useState(false);
   const [htmlLoading, setHtmlLoading] = useState(false);
   const [html, setHtml] = useState("");
 
@@ -20,30 +19,6 @@ export default function ImportarPage() {
     const token = data.session?.access_token;
     if (!token) throw new Error("No autenticado");
     return { Authorization: `Bearer ${token}` };
-  };
-
-  const onImport = async () => {
-    setLoading(true);
-    try {
-      const headers = await getAuthHeader();
-      const res = await fetch("/api/import/sheet", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", ...headers },
-      });
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? `Error ${res.status}`);
-      }
-      const r = await res.json();
-      toast.success(
-        `Importadas ${r.inserted} · saltadas ${r.skipped} (duplicadas) · total ${r.total}`,
-      );
-      qc.invalidateQueries();
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Error importando");
-    } finally {
-      setLoading(false);
-    }
   };
 
   const onImportHtml = async () => {
@@ -88,31 +63,11 @@ export default function ImportarPage() {
       <div>
         <h1 className="font-display text-2xl font-semibold tracking-tight">Importar</h1>
         <p className="text-sm text-muted-foreground">
-          Importa tu histórico desde Google Sheets o pega el HTML del historial de 22Bet.
+          Pega el HTML del historial de 22Bet para importar tus apuestas de forma automática.
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card className="p-5">
-          <div className="mb-3 flex items-center gap-2">
-            <Download className="h-4 w-4 text-primary" />
-            <h2 className="font-display font-semibold">Semilla desde Google Sheet</h2>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Lee la pestaña <code className="text-foreground">REGISTRO</code> de tu Sheet de banca y
-            crea las apuestas que aún no existen en BankrollOS. Idempotente — puedes volver a
-            pulsarlo sin duplicar.
-          </p>
-          <Button onClick={onImport} disabled={loading} className="mt-4 w-full gap-2">
-            {loading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Download className="h-4 w-4" />
-            )}
-            {loading ? "Importando…" : "Importar Sheet"}
-          </Button>
-        </Card>
-
+      <div className="max-w-xl">
         <Card className="p-5">
           <div className="mb-3 flex items-center gap-2">
             <FileCode2 className="h-4 w-4 text-accent" />
