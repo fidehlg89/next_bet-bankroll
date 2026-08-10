@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-08-10
+
+### Added
+- **Dashboard**: Added "Total Aportado" (Total Contributed) indicator to the main Bankroll card to clearly show the net funds inserted into the platform (deposits minus withdrawals, including initial bankroll). (#102)
+
 ## [1.7.0] - 2026-07-25
 
 ### Removed
