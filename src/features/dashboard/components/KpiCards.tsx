@@ -16,6 +16,9 @@ export function KpiCards({ stats }: { stats: BetStats }) {
               <span>Inicial {fEUR(stats.initialBankroll)}</span>
               <InitialBankrollModal baseBankroll={stats.initialBankroll} />
             </div>
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground">Aportado {fEUR(stats.baseBankroll)}</span>
+            </div>
             {stats.pendingStake > 0 && (
               <span className="text-pending font-medium">
                 En juego: {fEUR(stats.pendingStake)} ({stats.pending}{" "}
