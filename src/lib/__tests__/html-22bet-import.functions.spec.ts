@@ -117,13 +117,13 @@ describe("html-22bet-import.functions", () => {
   });
 
   describe("import22BetHistory", () => {
-    let mockSupabase: any;
-    let mockSelectFn: any;
-    let mockInsertFn: any;
-    let mockUpdateFn: any;
-    let mockEqFn: any;
-    let mockInFn: any;
-    let mockMaybeSingleFn: any;
+    let mockSupabase: unknown;
+    let mockSelectFn: ReturnType<typeof vi.fn>;
+    let mockInsertFn: ReturnType<typeof vi.fn>;
+    let mockUpdateFn: ReturnType<typeof vi.fn>;
+    let mockEqFn: ReturnType<typeof vi.fn>;
+    let mockInFn: ReturnType<typeof vi.fn>;
+    let mockMaybeSingleFn: ReturnType<typeof vi.fn>;
 
     beforeEach(() => {
       // Setup chainable mock functions for Supabase query builder
