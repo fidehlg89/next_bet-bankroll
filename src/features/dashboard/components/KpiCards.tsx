@@ -12,12 +12,14 @@ export function KpiCards({ stats }: { stats: BetStats }) {
         value={fEUR(stats.currentBankroll)}
         hint={
           <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-2">
-              <span>Inicial {fEUR(stats.initialBankroll)}</span>
-              <InitialBankrollModal baseBankroll={stats.initialBankroll} />
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">Aportado {fEUR(stats.baseBankroll)}</span>
+            <div className="flex items-center gap-4 flex-wrap">
+              <div className="flex items-center gap-2">
+                <span>Inicial {fEUR(stats.initialBankroll)}</span>
+                <InitialBankrollModal baseBankroll={stats.initialBankroll} />
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground">Total Aportado {fEUR(stats.baseBankroll)}</span>
+              </div>
             </div>
             {stats.pendingStake > 0 && (
               <span className="text-pending font-medium">

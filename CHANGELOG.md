@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.1] - 2026-08-11
+
+### Changed
+- **Dashboard**: Renamed "Aportado" to "Total Aportado" and aligned it horizontally next to the "Inicial" amount in the Bankroll KPI card for better readability.
+
 ## [1.8.0] - 2026-08-10
 
 ### Added

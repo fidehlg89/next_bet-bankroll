@@ -14,20 +14,23 @@ vi.mock("@/features/dashboard/components/InitialBankrollModal", () => ({
 
 const mockStats: BetStats = {
   initialBankroll: 1000,
+  baseBankroll: 1000,
   currentBankroll: 1250,
   profit: 250,
   yield: 12.5,
   winRate: 62.5,
-  totalBets: 20,
+  totalPicks: 20,
   wins: 10,
   losses: 6,
   pushes: 2,
   pending: 2,
   pendingStake: 50,
-  roi: 25,
   avgOdds: 1.85,
   avgStake: 25,
   totalStaked: 500,
+  bestWin: 50,
+  worstLoss: -25,
+  currentStreak: 2,
 };
 
 function renderKpiCards(stats: BetStats = mockStats) {
@@ -45,6 +48,8 @@ describe("KpiCards", () => {
 
     expect(screen.getByText("Bankroll")).toBeInTheDocument();
     expect(screen.getByText(/1250,00/)).toBeInTheDocument();
+    expect(screen.getByText(/Inicial.*1000,00/)).toBeInTheDocument();
+    expect(screen.getByText(/Total Aportado/)).toBeInTheDocument();
 
     expect(screen.getByText("Profit")).toBeInTheDocument();
     expect(screen.getByText(/^250,00/)).toBeInTheDocument();
