@@ -49,11 +49,11 @@ describe("KpiCards", () => {
     expect(screen.getByText("Bankroll")).toBeInTheDocument();
     expect(screen.getByText(/1250,00/)).toBeInTheDocument();
     expect(screen.getByText(/Inicial.*1000,00/)).toBeInTheDocument();
-    expect(screen.getByText(/Total Aportado/)).toBeInTheDocument();
 
     expect(screen.getByText("Profit")).toBeInTheDocument();
     expect(screen.getByText(/^250,00/)).toBeInTheDocument();
     expect(screen.getByText("10W · 6L · 2P")).toBeInTheDocument();
+    expect(screen.getByText(/Total Aportado/)).toBeInTheDocument();
 
     expect(screen.getByText("Win Rate")).toBeInTheDocument();
     expect(screen.getByText("62.50 %")).toBeInTheDocument();
