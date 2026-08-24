@@ -40,9 +40,7 @@ export function KpiCards({ stats }: { stats: BetStats }) {
             <span>
               {stats.wins}W · {stats.losses}L · {stats.pushes}P
             </span>
-            <span className="text-muted-foreground">
-              Total Aportado {fEUR(stats.baseBankroll)}
-            </span>
+            <span className="text-muted-foreground">Total Aportado {fEUR(stats.baseBankroll)}</span>
           </div>
         }
       />
