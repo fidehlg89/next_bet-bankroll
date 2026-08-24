@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.2] - 2026-08-24
+
+### Fixed
+- **Tipster Dropdown List**: Fixed a bug where tipsters (e.g. TipsPro) were not appearing in the tipster selection dropdown due to the Supabase 1000-row limit on the bets table. The list now correctly queries the `tipsters` table as the primary source of truth.
+
+## [1.8.1] - 2026-08-11
+
+### Changed
+- **Dashboard**: Renamed "Aportado" to "Total Aportado" and aligned it horizontally next to the "Inicial" amount in the Bankroll KPI card for better readability.
+
 ## [1.8.0] - 2026-08-10
 
 ### Added

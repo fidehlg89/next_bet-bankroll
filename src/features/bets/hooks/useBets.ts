@@ -41,8 +41,24 @@ export const useTipsterList = () =>
   useQuery({
     queryKey: ["tipsters-distinct"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("bets").select("tipster").order("tipster");
-      if (error) throw error;
-      return Array.from(new Set((data ?? []).map((r) => r.tipster))).filter(Boolean) as string[];
+      // Fetch from tipsters table to get all registered tipsters
+      const { data: tData, error: tError } = await supabase
+        .from("tipsters")
+        .select("name")
+        .order("name");
+      if (tError) throw tError;
+
+      // Fallback: also fetch recent distinct tipsters from bets in case some are missing in tipsters table
+      const { data: bData } = await supabase
+        .from("bets")
+        .select("tipster")
+        .order("tipster")
+        .limit(1000);
+
+      const names = new Set<string>();
+      (tData ?? []).forEach((r) => names.add(r.name));
+      (bData ?? []).forEach((r) => names.add(r.tipster));
+
+      return Array.from(names).filter(Boolean).sort();
     },
   });

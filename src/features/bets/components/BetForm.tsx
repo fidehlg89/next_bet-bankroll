@@ -18,6 +18,7 @@ import { useCreateBet, useUpdateBet } from "../hooks/useBetMutations";
 import { MARKETS, BET_TYPES, RESULTS } from "@/shared/lib/constants";
 import { useTipsterList } from "../hooks/useBets";
 import type { Bet } from "../types/bet.types";
+import { useTipsterSettingsStore } from "@/store/tipster-settings";
 
 interface Props {
   onDone: () => void;
@@ -26,6 +27,7 @@ interface Props {
 
 export function BetForm({ onDone, bet }: Props) {
   const { data: tipsters } = useTipsterList();
+  const { inactiveTipsters } = useTipsterSettingsStore();
   const create = useCreateBet();
   const update = useUpdateBet();
   const toDatetimeLocal = (date: string | Date) => {
@@ -68,7 +70,11 @@ export function BetForm({ onDone, bet }: Props) {
   });
 
   const currentTipster = form.watch("tipster");
-  const knownTipsters = tipsters ?? [];
+  const knownTipsters = Array.from(new Set([...(tipsters ?? []), currentTipster]))
+    .filter(Boolean)
+    .filter((t) => !inactiveTipsters.includes(t) || t === currentTipster)
+    .sort();
+
   const [addingNew, setAddingNew] = useState(
     isEdit ? !knownTipsters.includes(bet!.tipster) : knownTipsters.length === 0,
   );

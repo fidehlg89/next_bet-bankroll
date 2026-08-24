@@ -24,6 +24,7 @@ import type { Bet, BetResult } from "../types/bet.types";
 import { Pencil, Trash2, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useTipsterSettingsStore } from "@/store/tipster-settings";
 import {
   Pagination,
   PaginationContent,
@@ -38,6 +39,7 @@ export function BetTable({ bets }: { bets: Bet[] }) {
   const del = useDeleteBet();
   const updateTipster = useUpdateBetTipster();
   const { data: tipsters } = useTipsterList();
+  const { inactiveTipsters } = useTipsterSettingsStore();
   const [flashId, setFlashId] = useState<string | null>(null);
   const [editBet, setEditBet] = useState<Bet | null>(null);
   const [page, setPage] = useState(1);
@@ -108,6 +110,7 @@ export function BetTable({ bets }: { bets: Bet[] }) {
                     <SelectContent>
                       {Array.from(new Set([...(tipsters ?? []), b.tipster]))
                         .filter(Boolean)
+                        .filter((t) => !inactiveTipsters.includes(t) || t === b.tipster)
                         .map((t) => (
                           <SelectItem key={t} value={t}>
                             {t}
