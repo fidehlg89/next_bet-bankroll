@@ -6,6 +6,7 @@ import type {
   TipsterStat,
   DailyBankroll,
   Market,
+  Bet,
 } from "@/features/bets/types/bet.types";
 
 export const useMarketStats = () =>
@@ -47,7 +48,7 @@ export const useTipsterStats = () =>
         map.set(k, cur);
       }
       // need yield per tipster from bets
-      const allBets: any[] = [];
+      const allBets: Pick<Bet, "tipster" | "stake" | "bet_type" | "result" | "bet_date">[] = [];
       const limit = 1000;
       let page = 0;
       while (true) {
@@ -58,7 +59,9 @@ export const useTipsterStats = () =>
           .range(page * limit, (page + 1) * limit - 1);
         if (error) throw error;
         if (!data || data.length === 0) break;
-        allBets.push(...data);
+        allBets.push(
+          ...(data as Pick<Bet, "tipster" | "stake" | "bet_type" | "result" | "bet_date">[]),
+        );
         if (data.length < limit) break;
         page++;
       }
