@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Bet } from "@/features/bets/types/bet.types";
 
 export interface TipsterMonthlyRow {
   tipster: string;
@@ -45,7 +46,7 @@ export const useDailyPnLByTipster = () =>
   useQuery({
     queryKey: ["performance", "daily-tipster"],
     queryFn: async () => {
-      const allData: any[] = [];
+      const allData: Pick<Bet, "bet_date" | "tipster" | "pnl" | "result">[] = [];
       const limit = 1000;
       let page = 0;
       while (true) {
@@ -57,7 +58,7 @@ export const useDailyPnLByTipster = () =>
           .range(page * limit, (page + 1) * limit - 1);
         if (error) throw error;
         if (!data || data.length === 0) break;
-        allData.push(...data);
+        allData.push(...(data as Pick<Bet, "bet_date" | "tipster" | "pnl" | "result">[]));
         if (data.length < limit) break;
         page++;
       }
@@ -83,7 +84,7 @@ export const useResultDistribution = () =>
   useQuery({
     queryKey: ["performance", "distribution"],
     queryFn: async () => {
-      const allData: any[] = [];
+      const allData: Pick<Bet, "result">[] = [];
       const limit = 1000;
       let page = 0;
       while (true) {
@@ -94,7 +95,7 @@ export const useResultDistribution = () =>
           .range(page * limit, (page + 1) * limit - 1);
         if (error) throw error;
         if (!data || data.length === 0) break;
-        allData.push(...data);
+        allData.push(...(data as Pick<Bet, "result">[]));
         if (data.length < limit) break;
         page++;
       }
