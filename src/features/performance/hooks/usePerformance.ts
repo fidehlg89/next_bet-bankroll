@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Bet } from "@/features/bets/types/bet.types";
 
 export interface TipsterMonthlyRow {
   tipster: string;
@@ -45,18 +46,28 @@ export const useDailyPnLByTipster = () =>
   useQuery({
     queryKey: ["performance", "daily-tipster"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("bets")
-        .select("bet_date, tipster, pnl, result")
-        .not("result", "is", null)
-        .order("bet_date", { ascending: true });
-      if (error) throw error;
-      const tipsters = Array.from(new Set((data ?? []).map((r) => r.tipster as string)));
-      const dates = Array.from(new Set((data ?? []).map((r) => r.bet_date as string))).sort();
+      const allData: Pick<Bet, "bet_date" | "tipster" | "pnl" | "result">[] = [];
+      const limit = 1000;
+      let page = 0;
+      while (true) {
+        const { data, error } = await supabase
+          .from("bets")
+          .select("bet_date, tipster, pnl, result")
+          .not("result", "is", null)
+          .order("bet_date", { ascending: true })
+          .range(page * limit, (page + 1) * limit - 1);
+        if (error) throw error;
+        if (!data || data.length === 0) break;
+        allData.push(...(data as Pick<Bet, "bet_date" | "tipster" | "pnl" | "result">[]));
+        if (data.length < limit) break;
+        page++;
+      }
+      const tipsters = Array.from(new Set(allData.map((r) => r.tipster as string)));
+      const dates = Array.from(new Set(allData.map((r) => r.bet_date as string))).sort();
       const running = new Map<string, number>(tipsters.map((t) => [t, 0]));
       const points: DailyTipsterPoint[] = [];
       for (const d of dates) {
-        for (const row of data ?? []) {
+        for (const row of allData) {
           if (row.bet_date === d) {
             running.set(row.tipster, (running.get(row.tipster) ?? 0) + Number(row.pnl ?? 0));
           }
@@ -73,13 +84,23 @@ export const useResultDistribution = () =>
   useQuery({
     queryKey: ["performance", "distribution"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("bets")
-        .select("result")
-        .not("result", "is", null);
-      if (error) throw error;
+      const allData: Pick<Bet, "result">[] = [];
+      const limit = 1000;
+      let page = 0;
+      while (true) {
+        const { data, error } = await supabase
+          .from("bets")
+          .select("result")
+          .not("result", "is", null)
+          .range(page * limit, (page + 1) * limit - 1);
+        if (error) throw error;
+        if (!data || data.length === 0) break;
+        allData.push(...(data as Pick<Bet, "result">[]));
+        if (data.length < limit) break;
+        page++;
+      }
       const count = { W: 0, L: 0, P: 0 };
-      data.forEach((b) => {
+      allData.forEach((b) => {
         if (b.result === "W") count.W++;
         if (b.result === "L") count.L++;
         if (b.result === "P") count.P++;

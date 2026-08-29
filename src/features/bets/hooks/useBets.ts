@@ -15,25 +15,37 @@ export const useBets = (filters?: BetFilters) =>
   useQuery({
     queryKey: ["bets", filters],
     queryFn: async () => {
-      let q = supabase
-        .from("bets")
-        .select("*")
-        .order("bet_date", { ascending: false })
-        .order("created_at", { ascending: false });
-      if (filters?.tipster && filters.tipster !== "all") q = q.eq("tipster", filters.tipster);
-      if (filters?.market && filters.market !== "all") q = q.eq("market", filters.market);
-      if (filters?.dateRange?.from) {
-        q = q.gte("bet_date", format(filters.dateRange.from, "yyyy-MM-dd"));
-      }
-      if (filters?.dateRange?.to) {
-        q = q.lte("bet_date", format(filters.dateRange.to, "yyyy-MM-dd"));
-      }
-      if (filters?.result === "pending") q = q.is("result", null);
-      else if (filters?.result && filters.result !== "all") q = q.eq("result", filters.result);
+      const allData: Bet[] = [];
+      const limit = 1000;
+      let page = 0;
 
-      const { data, error } = await q;
-      if (error) throw error;
-      return (data ?? []) as Bet[];
+      while (true) {
+        let q = supabase
+          .from("bets")
+          .select("*")
+          .order("bet_date", { ascending: false })
+          .order("created_at", { ascending: false })
+          .range(page * limit, (page + 1) * limit - 1);
+
+        if (filters?.tipster && filters.tipster !== "all") q = q.eq("tipster", filters.tipster);
+        if (filters?.market && filters.market !== "all") q = q.eq("market", filters.market);
+        if (filters?.dateRange?.from) {
+          q = q.gte("bet_date", format(filters.dateRange.from, "yyyy-MM-dd"));
+        }
+        if (filters?.dateRange?.to) {
+          q = q.lte("bet_date", format(filters.dateRange.to, "yyyy-MM-dd"));
+        }
+        if (filters?.result === "pending") q = q.is("result", null);
+        else if (filters?.result && filters.result !== "all") q = q.eq("result", filters.result);
+
+        const { data, error } = await q;
+        if (error) throw error;
+        if (!data || data.length === 0) break;
+        allData.push(...(data as Bet[]));
+        if (data.length < limit) break;
+        page++;
+      }
+      return allData;
     },
   });
 

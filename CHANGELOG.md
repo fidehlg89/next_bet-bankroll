@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.3] - 2026-08-29
+
+### Fixed
+- **Supabase Query Limits**: Implemented auto-paging / chunked queries in batches of 1000 for `bets` and `bankroll_transactions` in order to bypass the PostgREST default maximum row limit of 1000, ensuring users with large betting histories can view all their data on the web app.
+
 ## [1.8.2] - 2026-08-24
 
 ### Fixed

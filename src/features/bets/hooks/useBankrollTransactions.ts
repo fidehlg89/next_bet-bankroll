@@ -8,13 +8,24 @@ export const useBankrollTransactions = () =>
   useQuery({
     queryKey: ["bankroll-transactions"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("bankroll_transactions")
-        .select("*")
-        .order("transaction_date", { ascending: false });
+      const allData: BankrollTransaction[] = [];
+      const limit = 1000;
+      let page = 0;
 
-      if (error) throw error;
-      return (data ?? []) as BankrollTransaction[];
+      while (true) {
+        const { data, error } = await supabase
+          .from("bankroll_transactions")
+          .select("*")
+          .order("transaction_date", { ascending: false })
+          .range(page * limit, (page + 1) * limit - 1);
+
+        if (error) throw error;
+        if (!data || data.length === 0) break;
+        allData.push(...(data as BankrollTransaction[]));
+        if (data.length < limit) break;
+        page++;
+      }
+      return allData;
     },
   });
 
