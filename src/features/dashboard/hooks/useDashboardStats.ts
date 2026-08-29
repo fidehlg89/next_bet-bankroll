@@ -47,13 +47,24 @@ export const useTipsterStats = () =>
         map.set(k, cur);
       }
       // need yield per tipster from bets
-      const { data: bets } = await supabase
-        .from("bets")
-        .select("tipster, stake, bet_type, result, bet_date")
-        .not("result", "is", null);
+      const allBets: any[] = [];
+      const limit = 1000;
+      let page = 0;
+      while (true) {
+        const { data, error } = await supabase
+          .from("bets")
+          .select("tipster, stake, bet_type, result, bet_date")
+          .not("result", "is", null)
+          .range(page * limit, (page + 1) * limit - 1);
+        if (error) throw error;
+        if (!data || data.length === 0) break;
+        allBets.push(...data);
+        if (data.length < limit) break;
+        page++;
+      }
       const stakeMap = new Map<string, number>();
       const dateMap = new Map<string, { min: string; max: string }>();
-      for (const b of bets ?? []) {
+      for (const b of allBets) {
         if (b.bet_type !== "Bono") {
           stakeMap.set(b.tipster, (stakeMap.get(b.tipster) ?? 0) + Number(b.stake));
         }
